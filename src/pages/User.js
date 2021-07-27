@@ -31,7 +31,7 @@ import USERLIST from '../_mocks_/user';
 
 // ----------------------------------------------------------------------
 
-const TABLE_HEAD = [
+const TABLE_HEAD1 = [
   { id: 'name', label: 'Name', alignRight: false },
   { id: 'company', label: 'Company', alignRight: false },
   { id: 'role', label: 'Role', alignRight: false },
@@ -40,6 +40,15 @@ const TABLE_HEAD = [
   { id: '' }
 ];
 
+const TABLE_HEAD = [
+  { id: 'name', label: 'Nome', alignRight: false },
+  { id: 'matricula', label: 'Matrícula', alignRight: false },
+  { id: 'inicio', label: 'Início', alignRight: false },
+  { id: 'supervisor', label: 'Supervisor', alignRight: false },
+  { id: 'documento', label: 'Documento', alignRight: false },
+  { id: 'avaliacao', label: 'Avaliação', alignRight: false },
+  { id: '' }
+];
 // ----------------------------------------------------------------------
 
 function descendingComparator(a, b, orderBy) {
@@ -136,7 +145,7 @@ export default function User() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            User
+            Estagiários
           </Typography>
           <Button
             variant="contained"

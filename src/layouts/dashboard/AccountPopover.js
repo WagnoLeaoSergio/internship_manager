@@ -21,12 +21,12 @@ const MENU_OPTIONS = [
     linkTo: '/'
   },
   {
-    label: 'Profile',
+    label: 'Perfil',
     icon: personFill,
     linkTo: '#'
   },
   {
-    label: 'Settings',
+    label: 'Configurações',
     icon: settings2Fill,
     linkTo: '#'
   }
@@ -111,7 +111,7 @@ export default function AccountPopover() {
 
         <Box sx={{ p: 2, pt: 1.5 }}>
           <Button fullWidth color="inherit" variant="outlined">
-            Logout
+            Sair
           </Button>
         </Box>
       </MenuPopover>
