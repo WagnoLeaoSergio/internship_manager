@@ -31,13 +31,10 @@ import USERLIST from '../_mocks_/user';
 
 // ----------------------------------------------------------------------
 
-const TABLE_HEAD = [
+const TABLE_HEAD_RELATORIO = [
   { id: 'name', label: 'Nome', alignRight: false },
-  { id: 'matricula', label: 'Matrícula', alignRight: false },
-  { id: 'inicio', label: 'Início', alignRight: false },
-  { id: 'supervisor', label: 'Supervisor', alignRight: false },
-  { id: 'documento', label: 'Documento', alignRight: false },
-  { id: 'avaliacao', label: 'Avaliação', alignRight: false },
+  { id: 'dataEntrega', label: 'Data de Entrega', alignRight: false },
+  { id: 'dataEnvio', label: 'Data de Envio', alignRight: false },
   { id: '' }
 ];
 // ----------------------------------------------------------------------
@@ -132,44 +129,48 @@ export default function PerfilUsuario() {
   const isUserNotFound = filteredUsers.length === 0;
 
   return (
-    <Page title="Painel do Coordenador">
+    <Page title="Perfil do Discente">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="center" mb={5}>
-          {/* <Typography variant="h4" gutterBottom>
-            Estagiários
-          </Typography>
-          <Button
-            variant="contained"
-            component={RouterLink}
-            to="#"
-            startIcon={<Icon icon={plusFill} />}
-          >
-            Novo discente
-          </Button> */}
-
           <Card>
+            <Stack direction="row" alignItems="center" justifyContent="space-between" padding={3}>
+              <Avatar src={USERLIST[0].avatarUrl} sx={{ width: 80, height: 80 }} />
+              <Typography paddingRight={3} variant="h4">
+                Estagiário
+              </Typography>
+            </Stack>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
                 <TableBody>
                   <TableRow>
-                    <TableCell>a</TableCell>
-                    <TableCell>a</TableCell>
+                    <TableCell>
+                      <Typography variant="h5">Nome</Typography>
+                    </TableCell>
+                    <TableCell>{USERLIST[0].name}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell>a</TableCell>
-                    <TableCell>a</TableCell>
+                    <TableCell>
+                      <Typography variant="h5">Matrícula</Typography>
+                    </TableCell>
+                    <TableCell>{USERLIST[0].matricula}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell>a</TableCell>
-                    <TableCell>a</TableCell>
+                    <TableCell>
+                      <Typography variant="h5">Início</Typography>
+                    </TableCell>
+                    <TableCell>{USERLIST[0].inicio}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell>a</TableCell>
-                    <TableCell>a</TableCell>
+                    <TableCell>
+                      <Typography variant="h5">Documento</Typography>
+                    </TableCell>
+                    <TableCell>{USERLIST[0].documento ? 'Enviado' : 'Pendente'}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell>a</TableCell>
-                    <TableCell>a</TableCell>
+                    <TableCell>
+                      <Typography variant="h5">Avaliação</Typography>
+                    </TableCell>
+                    <TableCell>{USERLIST[0].avaliacao ? 'Enviado' : 'Pendente'}</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -178,11 +179,20 @@ export default function PerfilUsuario() {
         </Stack>
 
         <Card>
-          <UserListToolbar
-            numSelected={selected.length}
-            filterName={filterName}
-            onFilterName={handleFilterByName}
-          />
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            padding={3}
+            mr={5}
+          >
+            <UserListToolbar
+              numSelected={selected.length}
+              filterName={filterName}
+              onFilterName={handleFilterByName}
+            />
+            <Typography variant="h5">Relatórios</Typography>
+          </Stack>
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -190,7 +200,7 @@ export default function PerfilUsuario() {
                 <UserListHead
                   order={order}
                   orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
+                  headLabel={TABLE_HEAD_RELATORIO}
                   rowCount={USERLIST.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
@@ -200,17 +210,7 @@ export default function PerfilUsuario() {
                   {filteredUsers
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
-                      const {
-                        id,
-                        name,
-                        matricula,
-                        inicio,
-                        supervisor,
-                        documento,
-                        avaliacao,
-                        avatarUrl,
-                        isVerified
-                      } = row;
+                      const { id, name, matricula } = row;
                       const isItemSelected = selected.indexOf(name) !== -1;
 
                       return (
@@ -230,21 +230,12 @@ export default function PerfilUsuario() {
                           </TableCell>
                           <TableCell component="th" scope="row" padding="none">
                             <Stack direction="row" alignItems="center" spacing={2}>
-                              <Avatar alt={name} src={avatarUrl} />
                               <Typography variant="subtitle2" noWrap>
                                 {name}
                               </Typography>
                             </Stack>
                           </TableCell>
                           <TableCell align="left">{matricula}</TableCell>
-                          <TableCell align="left">{inicio}</TableCell>
-                          <TableCell align="left">{supervisor}</TableCell>
-                          <TableCell align="left">
-                            <Checkbox checked={documento} />
-                          </TableCell>
-                          <TableCell align="left">
-                            <Checkbox checked={avaliacao} />
-                          </TableCell>
 
                           <TableCell align="right">
                             <UserMoreMenu />
