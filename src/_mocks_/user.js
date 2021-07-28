@@ -9,21 +9,13 @@ const users = [...Array(24)].map((_, index) => ({
   id: faker.datatype.uuid(),
   avatarUrl: mockImgAvatar(index + 1),
   name: faker.name.findName(),
-  company: faker.company.companyName(),
-  isVerified: faker.datatype.boolean(),
-  status: sample(['active', 'banned']),
-  role: sample([
-    'Leader',
-    'Hr Manager',
-    'UI Designer',
-    'UX Designer',
-    'UI/UX Designer',
-    'Project Manager',
-    'Backend Developer',
-    'Full Stack Designer',
-    'Front End Developer',
-    'Full Stack Developer'
-  ])
+  matricula: `${faker.date.past(5).getFullYear()}
+    ${faker.datatype.number({ min: 10000, max: 100000 })}
+    ${faker.random.alpha({ upcase: true })}`,
+  inicio: faker.date.past(5).getFullYear(),
+  supervisor: faker.name.findName(),
+  documento: faker.datatype.boolean(),
+  avaliacao: faker.datatype.boolean()
 }));
 
 export default users;

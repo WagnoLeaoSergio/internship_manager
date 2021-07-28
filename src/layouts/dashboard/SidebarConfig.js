@@ -18,8 +18,13 @@ const sidebarConfig = [
     icon: getIcon(pieChart2Fill)
   },
   {
-    title: 'user',
+    title: 'Discentes',
     path: '/dashboard/user',
+    icon: getIcon(peopleFill)
+  },
+  {
+    title: 'Perfil',
+    path: '/dashboard/perfilusuario',
     icon: getIcon(peopleFill)
   },
   {
@@ -33,12 +38,12 @@ const sidebarConfig = [
     icon: getIcon(fileTextFill)
   },
   {
-    title: 'login',
+    title: 'Entrar',
     path: '/login',
     icon: getIcon(lockFill)
   },
   {
-    title: 'register',
+    title: 'Cadastrar',
     path: '/register',
     icon: getIcon(personAddFill)
   },

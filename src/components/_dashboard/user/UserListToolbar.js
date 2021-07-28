@@ -63,7 +63,7 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName 
         <SearchStyle
           value={filterName}
           onChange={onFilterName}
-          placeholder="Search user..."
+          placeholder="Procurar discente"
           startAdornment={
             <InputAdornment position="start">
               <Box component={Icon} icon={searchFill} sx={{ color: 'text.disabled' }} />
@@ -72,7 +72,7 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName 
         />
       )}
 
-      {numSelected > 0 ? (
+      {/* {numSelected > 0 ? (
         <Tooltip title="Delete">
           <IconButton>
             <Icon icon={trash2Fill} />
@@ -84,7 +84,7 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName 
             <Icon icon={roundFilterList} />
           </IconButton>
         </Tooltip>
-      )}
+      )} */}
     </RootStyle>
   );
 }

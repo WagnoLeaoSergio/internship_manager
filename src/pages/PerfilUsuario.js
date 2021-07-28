@@ -71,7 +71,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function User() {
+export default function PerfilUsuario() {
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -134,8 +134,8 @@ export default function User() {
   return (
     <Page title="Painel do Coordenador">
       <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
+        <Stack direction="row" alignItems="center" justifyContent="center" mb={5}>
+          {/* <Typography variant="h4" gutterBottom>
             Estagiários
           </Typography>
           <Button
@@ -145,7 +145,36 @@ export default function User() {
             startIcon={<Icon icon={plusFill} />}
           >
             Novo discente
-          </Button>
+          </Button> */}
+
+          <Card>
+            <TableContainer sx={{ minWidth: 800 }}>
+              <Table>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>a</TableCell>
+                    <TableCell>a</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>a</TableCell>
+                    <TableCell>a</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>a</TableCell>
+                    <TableCell>a</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>a</TableCell>
+                    <TableCell>a</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>a</TableCell>
+                    <TableCell>a</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Card>
         </Stack>
 
         <Card>
