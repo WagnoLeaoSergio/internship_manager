@@ -53,6 +53,7 @@ const SECONDARY = {
   contrastText: '#fff'
 };
 const INFO = {
+  ultraligther: '#ffda99',
   lighter: '#D0F2FF',
   light: '#74CAFF',
   main: '#1890FF',

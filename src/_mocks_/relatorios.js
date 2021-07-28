@@ -5,10 +5,12 @@ import { mockImgAvatar } from '../utils/mockImages';
 
 // ----------------------------------------------------------------------
 
-const supervisores = [...Array(24)].map((_, index) => ({
+const relatorios = [...Array(24)].map((_, index) => ({
   id: faker.datatype.uuid(),
   name: faker.name.title(),
-  descricao: faker.lorem.sentence()
+  descricao: faker.lorem.sentence(),
+  dataEntrega: faker.date.past(5).getFullYear(),
+  dataEnvio: faker.date.future(5).getFullYear()
 }));
 
-export default supervisores;
+export default relatorios;

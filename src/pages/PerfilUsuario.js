@@ -28,11 +28,14 @@ import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
 //
 import USERLIST from '../_mocks_/user';
+import RELATORIOS from '../_mocks_/relatorios';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD_RELATORIO = [
+  { id: 'id', label: '', alignRight: false },
   { id: 'name', label: 'Nome', alignRight: false },
+  { id: 'descricao', label: 'Descrição', alignRight: false },
   { id: 'dataEntrega', label: 'Data de Entrega', alignRight: false },
   { id: 'dataEnvio', label: 'Data de Envio', alignRight: false },
   { id: '' }
@@ -124,7 +127,7 @@ export default function PerfilUsuario() {
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(RELATORIOS, getComparator(order, orderBy), filterName);
 
   const isUserNotFound = filteredUsers.length === 0;
 
@@ -201,7 +204,7 @@ export default function PerfilUsuario() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD_RELATORIO}
-                  rowCount={USERLIST.length}
+                  rowCount={RELATORIOS.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
@@ -210,7 +213,7 @@ export default function PerfilUsuario() {
                   {filteredUsers
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
-                      const { id, name, matricula } = row;
+                      const { id, name, descricao, dataEntrega, dataEnvio } = row;
                       const isItemSelected = selected.indexOf(name) !== -1;
 
                       return (
@@ -235,7 +238,11 @@ export default function PerfilUsuario() {
                               </Typography>
                             </Stack>
                           </TableCell>
-                          <TableCell align="left">{matricula}</TableCell>
+                          <TableCell align="left">
+                            <Typography maxWidth="80%">{descricao}</Typography>
+                          </TableCell>
+                          <TableCell align="left">{dataEntrega}</TableCell>
+                          <TableCell align="left">{dataEnvio}</TableCell>
 
                           <TableCell align="right">
                             <UserMoreMenu />
@@ -265,7 +272,7 @@ export default function PerfilUsuario() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={USERLIST.length}
+            count={RELATORIOS.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

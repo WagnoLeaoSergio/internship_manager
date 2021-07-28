@@ -51,13 +51,15 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName,
       sx={{
         ...(numSelected > 0 && {
           color: 'primary.main',
-          bgcolor: 'primary.lighter'
+          bgcolor: 'primary.ultraligther',
+          width: '80%',
+          borderRadius: 2
         })
       }}
     >
       {numSelected > 0 ? (
         <Typography component="div" variant="subtitle1">
-          {numSelected} selected
+          {numSelected} selecionado(s)
         </Typography>
       ) : (
         <SearchStyle
