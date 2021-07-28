@@ -27,17 +27,15 @@ import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
 //
-import USERLIST from '../_mocks_/user';
-
+// import USERLIST from '../_mocks_/user';
+import USERLIST from '../_mocks_/supervisores';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Nome', alignRight: false },
-  { id: 'matricula', label: 'Matrícula', alignRight: false },
-  { id: 'inicio', label: 'Início', alignRight: false },
-  { id: 'supervisor', label: 'Supervisor', alignRight: false },
+  { id: 'instituicao', label: 'Instituição', alignRight: false },
   { id: 'documento', label: 'Documento', alignRight: false },
-  { id: 'avaliacao', label: 'Avaliação', alignRight: false },
+  { id: 'telefone', label: 'Telefone', alignRight: false },
   { id: '' }
 ];
 // ----------------------------------------------------------------------
@@ -71,7 +69,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function User() {
+export default function Supervisores() {
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
@@ -136,7 +134,7 @@ export default function User() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Estagiários
+            Supervisores
           </Typography>
           <Button
             variant="contained"
@@ -144,7 +142,7 @@ export default function User() {
             to="#"
             startIcon={<Icon icon={plusFill} />}
           >
-            Novo discente
+            Novo supervisor
           </Button>
         </Stack>
 
@@ -153,7 +151,7 @@ export default function User() {
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
-            placeholder="Procurar discente"
+            placeholder="Procurar supervisor"
           />
 
           <Scrollbar>
@@ -172,17 +170,7 @@ export default function User() {
                   {filteredUsers
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
-                      const {
-                        id,
-                        name,
-                        matricula,
-                        inicio,
-                        supervisor,
-                        documento,
-                        avaliacao,
-                        avatarUrl,
-                        isVerified
-                      } = row;
+                      const { id, avatarUrl, name, instituicao, documento, telefone } = row;
                       const isItemSelected = selected.indexOf(name) !== -1;
 
                       return (
@@ -208,15 +196,9 @@ export default function User() {
                               </Typography>
                             </Stack>
                           </TableCell>
-                          <TableCell align="left">{matricula}</TableCell>
-                          <TableCell align="left">{inicio}</TableCell>
-                          <TableCell align="left">{supervisor}</TableCell>
-                          <TableCell align="left">
-                            <Checkbox checked={documento} />
-                          </TableCell>
-                          <TableCell align="left">
-                            <Checkbox checked={avaliacao} />
-                          </TableCell>
+                          <TableCell align="left">{instituicao}</TableCell>
+                          <TableCell align="left">{documento}</TableCell>
+                          <TableCell align="left">{telefone}</TableCell>
 
                           <TableCell align="right">
                             <UserMoreMenu />
