@@ -23,6 +23,16 @@ const sidebarConfig = [
     icon: getIcon(peopleFill)
   },
   {
+    title: 'Relatórios',
+    path: '/dashboard/relatorios',
+    icon: getIcon(peopleFill)
+  },
+  {
+    title: 'Supervisores',
+    path: '/dashboard/supervisores',
+    icon: getIcon(peopleFill)
+  },
+  {
     title: 'Perfil',
     path: '/dashboard/perfilusuario',
     icon: getIcon(peopleFill)

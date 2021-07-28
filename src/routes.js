@@ -11,6 +11,8 @@ import Blog from './pages/Blog';
 
 import User from './pages/User';
 import PerfilUsuario from './pages/PerfilUsuario';
+import Supervisores from './pages/Supervisores';
+import Relatorios from './pages/Relatorios';
 
 import NotFound from './pages/Page404';
 
@@ -27,7 +29,9 @@ export default function Router() {
         { path: 'user', element: <User /> },
         { path: 'perfilusuario', element: <PerfilUsuario /> },
         { path: 'products', element: <Products /> },
-        { path: 'blog', element: <Blog /> }
+        { path: 'blog', element: <Blog /> },
+        { path: 'supervisores', element: <Supervisores /> },
+        { path: 'relatorios', element: <Relatorios /> }
       ]
     },
     {
