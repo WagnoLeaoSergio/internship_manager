@@ -17,13 +17,16 @@ export default function RegisterForm() {
 
   const RegisterSchema = Yup.object().shape({
     firstName: Yup.string()
-      .min(2, 'Too Short!')
-      .max(50, 'Too Long!')
-      .required('First name required'),
-    lastName: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required('Last name required'),
-    email: Yup.string().email('Email must be a valid email address').required('Email is required'),
-    password: Yup.string().required('Password is required'),
-    matricula: Yup.string()
+      .min(2, 'Muito curto!')
+      .max(50, 'Muito longo!')
+      .required('Primeiro nome necessário'),
+    lastName: Yup.string()
+      .min(2, 'Muito curto!')
+      .max(50, 'Muito longo!')
+      .required('Último nome necessário'),
+    email: Yup.string().email('Email deve ser um endereço válido').required('Email necessário'),
+    password: Yup.string().required('Senha necessária'),
+    matricula: Yup.string().required('Matrícula necessária')
   });
 
   const formik = useFormik({
@@ -76,6 +79,14 @@ export default function RegisterForm() {
 
           <TextField
             fullWidth
+            label="Matrícula"
+            {...getFieldProps('matricula')}
+            error={Boolean(touched.matricula && errors.matricula)}
+            helperText={touched.matricula && errors.matricula}
+          />
+
+          <TextField
+            fullWidth
             autoComplete="current-password"
             type={showPassword ? 'text' : 'password'}
             label="Senha"
@@ -91,23 +102,6 @@ export default function RegisterForm() {
             }}
             error={Boolean(touched.password && errors.password)}
             helperText={touched.password && errors.password}
-          />
-
-          <TextField
-            fullWidth
-            label="Matricula"
-            {...getFieldProps('matricula')}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton edge="end" onClick={() => setShowPassword((prev) => !prev)}>
-                    <Icon icon={showPassword ? eyeFill : eyeOffFill} />
-                  </IconButton>
-                </InputAdornment>
-              )
-            }}
-            error={Boolean(touched.matricula && errors.matricula)}
-            helperText={touched.matricula && errors.matricula}
           />
 
           <LoadingButton

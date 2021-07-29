@@ -132,7 +132,7 @@ export default function User() {
   const isUserNotFound = filteredUsers.length === 0;
 
   return (
-    <Page title="Painel do Coordenador">
+    <Page title="Estagiários - Gerenciador de Estágios">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
@@ -144,7 +144,7 @@ export default function User() {
             to="#"
             startIcon={<Icon icon={plusFill} />}
           >
-            Novo discente
+            Novo estagiário
           </Button>
         </Stack>
 
@@ -153,7 +153,7 @@ export default function User() {
             numSelected={selected.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
-            placeholder="Procurar discente"
+            placeholder="Procurar estagiário"
           />
 
           <Scrollbar>

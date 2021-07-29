@@ -130,7 +130,7 @@ export default function Supervisores() {
   const isUserNotFound = filteredUsers.length === 0;
 
   return (
-    <Page title="Painel do Coordenador">
+    <Page title="Supervisores - Gerenciador de Estágios">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>

@@ -132,7 +132,7 @@ export default function PerfilUsuario() {
   const isUserNotFound = filteredUsers.length === 0;
 
   return (
-    <Page title="Perfil do Discente">
+    <Page title="Perfil do Estagiário - Gerenciador de Estágios">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="center" mb={5}>
           <Card>
@@ -193,6 +193,7 @@ export default function PerfilUsuario() {
               numSelected={selected.length}
               filterName={filterName}
               onFilterName={handleFilterByName}
+              placeholder="Procurar relatório"
             />
             <Typography variant="h5">Relatórios</Typography>
           </Stack>

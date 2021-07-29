@@ -98,7 +98,7 @@ export default function LoginForm() {
           variant="contained"
           loading={isSubmitting}
         >
-          Logar
+          Entrar
         </LoadingButton>
       </Form>
     </FormikProvider>

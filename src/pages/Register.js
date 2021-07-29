@@ -41,11 +41,11 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 export default function Register() {
   return (
-    <RootStyle title="Register | Minimal-UI">
+    <RootStyle title="Registrar-se - Gerenciador de Estágios">
       <AuthLayout>
         Já possui uma conta? &nbsp;
         <Link underline="none" variant="subtitle2" component={RouterLink} to="/login">
-          Logar
+          Entrar
         </Link>
       </AuthLayout>
 
