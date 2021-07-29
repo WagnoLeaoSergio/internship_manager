@@ -8,6 +8,7 @@ import personAddFill from '@iconify/icons-eva/person-add-fill';
 import alertTriangleFill from '@iconify/icons-eva/alert-triangle-fill';
 import homeFilled from '@iconify/icons-ant-design/home-filled';
 import baselineHome from '@iconify-icons/ic/baseline-home';
+import reportIcon from '@iconify-icons/carbon/report';
 
 // ----------------------------------------------------------------------
 
@@ -27,7 +28,7 @@ const sidebarConfig = [
   {
     title: 'Relatórios',
     path: '/dashboard/relatorios',
-    icon: getIcon(peopleFill)
+    icon: getIcon(reportIcon)
   },
   {
     title: 'Supervisores',

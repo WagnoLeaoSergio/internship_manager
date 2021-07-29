@@ -5,6 +5,8 @@ import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { styled } from '@material-ui/core/styles';
 import { Box, Link, Button, Drawer, Typography, Avatar, Stack } from '@material-ui/core';
 // components
+import { margin } from '@material-ui/system';
+import initialpagelogo from '../../_mocks_/initial-page-logo';
 import Logo from '../../components/Logo';
 import Scrollbar from '../../components/Scrollbar';
 import NavSection from '../../components/NavSection';
@@ -25,11 +27,11 @@ const RootStyle = styled('div')(({ theme }) => ({
 }));
 
 const AccountStyle = styled('div')(({ theme }) => ({
-  display: 'flex',
+  // display: 'flex',
   alignItems: 'center',
-  padding: theme.spacing(2, 2.5),
-  borderRadius: theme.shape.borderRadiusSm,
-  backgroundColor: theme.palette.grey[200]
+  padding: theme.spacing(2, 2.5)
+  // borderRadius: theme.shape.borderRadiusMd
+  // backgroundColor: theme.palette.grey[200]
 }));
 
 // ----------------------------------------------------------------------
@@ -62,7 +64,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
         </Box>
       </Box>
 
-      <Box sx={{ mb: 5, mx: 2.5 }}>
+      {/* <Box sx={{ mb: 5, mx: 2.5 }}>
         <Link underline="none" component={RouterLink} to="#">
           <AccountStyle>
             <Avatar src={account.photoURL} alt="photoURL" />
@@ -74,6 +76,13 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
                 {account.role}
               </Typography>
             </Box>
+          </AccountStyle>
+        </Link>
+      </Box> */}
+      <Box sx={{ ml: 2, mb: 1, mt: -9 }}>
+        <Link underline="none" component={RouterLink} to="#">
+          <AccountStyle>
+            <Avatar src={initialpagelogo.photoURL} alt="photoURL" />
           </AccountStyle>
         </Link>
       </Box>

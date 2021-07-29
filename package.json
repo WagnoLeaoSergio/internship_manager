@@ -69,6 +69,7 @@
   "devDependencies": {
     "@babel/core": "^7.14.8",
     "@babel/eslint-parser": "^7.14.7",
+    "@iconify-icons/carbon": "^1.1.5",
     "@iconify-icons/ic": "^1.1.7",
     "@iconify/react": "^1.1.4",
     "eslint": "^7.31.0",
