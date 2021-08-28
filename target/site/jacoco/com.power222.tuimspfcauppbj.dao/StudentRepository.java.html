@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StudentRepository.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">The Ultimate Internship Manager Software Platform For College And University Plus Powered By Java</a> &gt; <a href="index.source.html" class="el_package">com.power222.tuimspfcauppbj.dao</a> &gt; <span class="el_source">StudentRepository.java</span></div><h1>StudentRepository.java</h1><pre class="source lang-java linenums">package com.power222.tuimspfcauppbj.dao;
+
+import com.power222.tuimspfcauppbj.model.Student;
+import com.power222.tuimspfcauppbj.util.ReviewState;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface StudentRepository extends JpaRepository&lt;Student, Long&gt; {
+    @SuppressWarnings(&quot;SpringDataMethodInconsistencyInspection&quot;)
+    Page&lt;Student&gt; findAllBySemestersAndResumesIsEmpty(String semester, Pageable pageable);
+
+    Page&lt;Student&gt; findAllBySemestersAndResumes_ReviewState(String semster, ReviewState reviewState, Pageable pageable);
+
+    Page&lt;Student&gt; findAllByApplications_ContractIsNull(Pageable pageable);
+
+    Page&lt;Student&gt; findAllByApplications_InterviewIsNotNull(Pageable pageable);
+
+    Page&lt;Student&gt; findAllBySemesters(String semester, Pageable pageable);
+
+    List&lt;Student&gt; findAllBySemesters(String semester);
+
+    default Page&lt;Student&gt; findAllBySemestersAndResumesReviewStatePending(String semester, Pageable pageable) {
+<span class="nc" id="L28">        return findAllBySemestersAndResumes_ReviewState(semester, ReviewState.PENDING, pageable);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EmployerService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">The Ultimate Internship Manager Software Platform For College And University Plus Powered By Java</a> &gt; <a href="index.source.html" class="el_package">com.power222.tuimspfcauppbj.service</a> &gt; <span class="el_source">EmployerService.java</span></div><h1>EmployerService.java</h1><pre class="source lang-java linenums">package com.power222.tuimspfcauppbj.service;
+
+import com.power222.tuimspfcauppbj.dao.EmployerRepository;
+import com.power222.tuimspfcauppbj.dao.UserRepository;
+import com.power222.tuimspfcauppbj.model.Employer;
+import com.power222.tuimspfcauppbj.util.SemesterContext;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class EmployerService {
+
+    private final EmployerRepository employerRepo;
+    private final UserRepository userRepo;
+    private final PasswordEncoder passwordEncoder;
+
+<span class="fc" id="L22">    public EmployerService(EmployerRepository employerRepo, UserRepository userRepo, PasswordEncoder passwordEncoder) {</span>
+<span class="fc" id="L23">        this.employerRepo = employerRepo;</span>
+<span class="fc" id="L24">        this.userRepo = userRepo;</span>
+<span class="fc" id="L25">        this.passwordEncoder = passwordEncoder;</span>
+<span class="fc" id="L26">    }</span>
+
+    public List&lt;Employer&gt; getAllEmployers() {
+<span class="fc" id="L29">        return employerRepo.findAllBySemesters(SemesterContext.getCurrent());</span>
+    }
+
+    public Optional&lt;Employer&gt; getEmployerById(long id) {
+<span class="fc" id="L33">        return employerRepo.findById(id);</span>
+    }
+
+    public Optional&lt;Employer&gt; persistNewEmployer(Employer employer) {
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        if (userRepo.existsByEmail(employer.getEmail()))</span>
+<span class="fc" id="L38">            return Optional.empty();</span>
+
+<span class="fc" id="L40">        employer.setPassword(passwordEncoder.encode(employer.getPassword()));</span>
+<span class="fc" id="L41">        employer.setOffers(Collections.emptyList());</span>
+<span class="fc" id="L42">        return Optional.of(employerRepo.saveAndFlush(employer));</span>
+    }
+
+    public Employer updateEmployer(long id, Employer employer) {
+<span class="fc" id="L46">        return employerRepo.findById(id)</span>
+<span class="fc" id="L47">                .map(oldEmployer -&gt; {</span>
+<span class="fc" id="L48">                    employer.setId(oldEmployer.getId());</span>
+<span class="fc" id="L49">                    return employerRepo.saveAndFlush(employer);</span>
+                })
+<span class="fc" id="L51">                .orElse(employer);</span>
+    }
+
+    @Transactional
+    public void deleteEmployerById(long id) {
+<span class="fc" id="L56">        employerRepo.deleteById(id);</span>
+<span class="fc" id="L57">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

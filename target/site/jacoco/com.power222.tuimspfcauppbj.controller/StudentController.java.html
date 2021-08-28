@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StudentController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">The Ultimate Internship Manager Software Platform For College And University Plus Powered By Java</a> &gt; <a href="index.source.html" class="el_package">com.power222.tuimspfcauppbj.controller</a> &gt; <span class="el_source">StudentController.java</span></div><h1>StudentController.java</h1><pre class="source lang-java linenums">package com.power222.tuimspfcauppbj.controller;
+
+import com.power222.tuimspfcauppbj.model.Student;
+import com.power222.tuimspfcauppbj.service.StudentService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/api/students&quot;)
+public class StudentController {
+
+    private final StudentService svc;
+
+<span class="fc" id="L17">    public StudentController(StudentService svc) {</span>
+<span class="fc" id="L18">        this.svc = svc;</span>
+<span class="fc" id="L19">    }</span>
+
+    @GetMapping
+    public List&lt;Student&gt; getAllStudents() {
+<span class="fc" id="L23">        return svc.getAllStudents();</span>
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Student&gt; getStudentById(@PathVariable long id) {
+<span class="fc" id="L28">        return svc.getStudentById(id)</span>
+<span class="fc" id="L29">                .map(ResponseEntity::ok)</span>
+<span class="fc" id="L30">                .orElse(ResponseEntity.notFound().build());</span>
+    }
+
+    @PostMapping
+    public ResponseEntity&lt;Student&gt; createStudent(@RequestBody Student newStudent) {
+<span class="fc" id="L35">        return svc.persistNewStudent(newStudent)</span>
+<span class="fc" id="L36">                .map(student -&gt; ResponseEntity.status(HttpStatus.CREATED).body(student))</span>
+<span class="fc" id="L37">                .orElse(ResponseEntity.status(HttpStatus.CONFLICT).build());</span>
+    }
+
+    @PutMapping(&quot;/{id}&quot;)
+    public Student updateStudent(@RequestBody Student student, @PathVariable long id) {
+<span class="fc" id="L42">        return svc.updateStudent(id, student);</span>
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public void deleteStudent(@PathVariable long id) {
+<span class="fc" id="L47">        svc.deleteStudentById(id);</span>
+<span class="fc" id="L48">    }</span>
+
+
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StudentApplicationController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">The Ultimate Internship Manager Software Platform For College And University Plus Powered By Java</a> &gt; <a href="index.source.html" class="el_package">com.power222.tuimspfcauppbj.controller</a> &gt; <span class="el_source">StudentApplicationController.java</span></div><h1>StudentApplicationController.java</h1><pre class="source lang-java linenums">package com.power222.tuimspfcauppbj.controller;
+
+import com.power222.tuimspfcauppbj.model.StudentApplication;
+import com.power222.tuimspfcauppbj.service.StudentApplicationService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/api/applications&quot;)
+public class StudentApplicationController {
+
+    private final StudentApplicationService svc;
+
+<span class="fc" id="L17">    public StudentApplicationController(StudentApplicationService svc) {</span>
+<span class="fc" id="L18">        this.svc = svc;</span>
+<span class="fc" id="L19">    }</span>
+
+    @GetMapping
+    public List&lt;StudentApplication&gt; getAllApplications() {
+<span class="fc" id="L23">        return svc.getAllApplication();</span>
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;StudentApplication&gt; getApplicationById(@PathVariable long id) {
+<span class="fc" id="L28">        return svc.getApplicationById(id)</span>
+<span class="fc" id="L29">                .map(ResponseEntity::ok)</span>
+<span class="fc" id="L30">                .orElse(ResponseEntity.notFound().build());</span>
+    }
+
+    @GetMapping(&quot;/pending&quot;)
+    public List&lt;StudentApplication&gt; getAllContractsWaitingForAdmin() {
+<span class="nc" id="L35">        return svc.getAllContractsWaitingForAdmin();</span>
+    }
+
+    @PostMapping(&quot;/{offerId}/{resumeId}&quot;)
+    public ResponseEntity&lt;StudentApplication&gt; createStudentApplication(
+            @PathVariable long offerId, @PathVariable long resumeId) {
+<span class="fc" id="L41">        return svc.createAndSaveNewApplication(offerId, resumeId)</span>
+<span class="fc" id="L42">                .map(resume -&gt; ResponseEntity.status(HttpStatus.CREATED).body(resume))</span>
+<span class="fc" id="L43">                .orElse(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());</span>
+    }
+
+    @PutMapping(&quot;/state/{id}&quot;)
+    public ResponseEntity&lt;StudentApplication&gt; updateStudentApplicationState(@RequestBody StudentApplication studentApplication, @PathVariable long id) {
+<span class="fc" id="L48">        return svc.updateStudentApplicationState(id, studentApplication)</span>
+<span class="fc" id="L49">                .map(ResponseEntity::ok)</span>
+<span class="fc" id="L50">                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());</span>
+
+    }
+
+    @PutMapping(&quot;/{id}&quot;)
+    public StudentApplication updateStudentApplication(@RequestBody StudentApplication studentApplication, @PathVariable long id) {
+<span class="fc" id="L56">        return svc.updateStudentApplication(id, studentApplication);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

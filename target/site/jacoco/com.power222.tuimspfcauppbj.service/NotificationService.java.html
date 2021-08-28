@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NotificationService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">The Ultimate Internship Manager Software Platform For College And University Plus Powered By Java</a> &gt; <a href="index.source.html" class="el_package">com.power222.tuimspfcauppbj.service</a> &gt; <span class="el_source">NotificationService.java</span></div><h1>NotificationService.java</h1><pre class="source lang-java linenums">package com.power222.tuimspfcauppbj.service;
+
+import com.power222.tuimspfcauppbj.dao.AdminRepository;
+import com.power222.tuimspfcauppbj.model.Contract;
+import com.power222.tuimspfcauppbj.model.InternshipOffer;
+import com.power222.tuimspfcauppbj.model.Resume;
+import org.springframework.stereotype.Service;
+
+@Service
+public class NotificationService {
+
+    private final MailSendingService mailSvc;
+    private final RsocketNotificationService notifSvc;
+    private final AdminRepository adminRepo;
+
+<span class="fc" id="L16">    public NotificationService(MailSendingService mailSvc, RsocketNotificationService notifSvc, AdminRepository adminRepo) {</span>
+<span class="fc" id="L17">        this.mailSvc = mailSvc;</span>
+<span class="fc" id="L18">        this.notifSvc = notifSvc;</span>
+<span class="fc" id="L19">        this.adminRepo = adminRepo;</span>
+<span class="fc" id="L20">    }</span>
+
+    public void notifyContractCreation(Contract contract) {
+<span class="fc" id="L23">        final var msg = &quot;Um novo contrato para você acaba de ser criado&quot;;</span>
+
+<span class="fc" id="L25">        mailSvc.notifyAboutCreation(contract);</span>
+<span class="fc" id="L26">        notifSvc.notify(contract.getStudentApplication().getStudent().getId(), msg);</span>
+<span class="fc" id="L27">        notifSvc.notify(contract.getStudentApplication().getOffer().getEmployer().getId(), msg);</span>
+<span class="fc" id="L28">    }</span>
+
+    public void notifyContractUpdate(Contract contract) {
+<span class="fc" id="L31">        mailSvc.notifyConcernedUsers(contract);</span>
+<span class="fc" id="L32">        notifyConcernedUsers(contract);</span>
+<span class="fc" id="L33">    }</span>
+
+    public void notifyContractDeletion(Contract contract) {
+<span class="fc" id="L36">        final var tmp = &quot;Seu contrato para a oferta %s acaba de ser excluído por um gerente de estágio&quot;;</span>
+<span class="fc" id="L37">        final var msg = String.format(tmp, contract.getStudentApplication().getOffer().getTitle());</span>
+
+<span class="fc" id="L39">        mailSvc.notifyAboutDeletion(contract);</span>
+<span class="fc" id="L40">        notifSvc.notify(contract.getStudentApplication().getStudent().getId(), msg);</span>
+<span class="fc" id="L41">        notifSvc.notify(contract.getStudentApplication().getOffer().getEmployer().getId(), msg);</span>
+<span class="fc" id="L42">    }</span>
+
+    public void notifyResumeCreation(Resume resume) {
+<span class="fc" id="L45">        final var tmp = &quot;%s %s acabou de enviar um novo currículo: %s. Por favor, revise-o&quot;;</span>
+<span class="fc" id="L46">        final var msg = String.format(tmp, resume.getOwner().getFirstName(),</span>
+<span class="fc" id="L47">                resume.getOwner().getLastName(), resume.getName());</span>
+
+<span class="fc" id="L49">        adminRepo.findAll().forEach(admin -&gt; notifSvc.notify(admin.getId(), msg));</span>
+<span class="fc" id="L50">    }</span>
+
+    public void notifyResumeUpdate(Resume resume) {
+<span class="fc" id="L53">        final var tmp = &quot;Seu %s currículo foi %s&quot;;</span>
+<span class="fc" id="L54">        final var msg = String.format(tmp, resume.getName(), resume.getReviewState().getValue());</span>
+
+<span class="fc" id="L56">        notifSvc.notify(resume.getOwner().getId(), msg);</span>
+<span class="fc" id="L57">    }</span>
+
+    public void notifyOfferCreation(InternshipOffer offer) {
+<span class="fc" id="L60">        final var tmp = &quot;%s acabou de enviar uma nova oferta: %s. Por favor, revise-a&quot;;</span>
+<span class="fc" id="L61">        final var msg = String.format(tmp, offer.getEmployer().getCompanyName(), offer.getTitle());</span>
+
+<span class="fc" id="L63">        adminRepo.findAll().forEach(admin -&gt; notifSvc.notify(admin.getId(), msg));</span>
+<span class="fc" id="L64">    }</span>
+
+    public void notifyOfferUpdate(InternshipOffer offer) {
+<span class="fc" id="L67">        final var tmp = &quot;Sua oferta %s foi %se&quot;;</span>
+<span class="fc" id="L68">        final var msg = String.format(tmp, offer.getTitle(), offer.getReviewState().getValue());</span>
+
+<span class="fc" id="L70">        notifSvc.notify(offer.getEmployer().getId(), msg);</span>
+<span class="fc" id="L71">    }</span>
+
+    public void notifyOfferAssigned(InternshipOffer offer, long studentId) {
+<span class="fc" id="L74">        final var tmp = &quot;Uma nova oferta está disponível para você: %s&quot;;</span>
+<span class="fc" id="L75">        final var msg = String.format(tmp, offer.getTitle());</span>
+
+<span class="fc" id="L77">        notifSvc.notify(studentId, msg);</span>
+<span class="fc" id="L78">    }</span>
+
+    private void notifyConcernedUsers(Contract contract) {
+<span class="fc" id="L81">        final var signTmp = &quot;Sua assinatura é necessária no contrato de oferta de %s para o aluno %s %s&quot;;</span>
+<span class="fc" id="L82">        final var signMsg = String.format(signTmp, contract.getStudentApplication().getOffer().getTitle(),</span>
+<span class="fc" id="L83">                contract.getStudentApplication().getStudent().getFirstName(),</span>
+<span class="fc" id="L84">                contract.getStudentApplication().getStudent().getLastName());</span>
+
+<span class="fc" id="L86">        final var signStudentTmp = &quot;Sua assinatura é necessária no contrato de oferta %s&quot;;</span>
+<span class="fc" id="L87">        final var signStudentMsg = String.format(signStudentTmp, contract.getStudentApplication().getOffer().getTitle());</span>
+
+<span class="fc" id="L89">        final var rejectTmp = &quot;O negócio %s foi rejeitado por %s de %s&quot;;</span>
+<span class="fc" id="L90">        final var rejectMsg = String.format(rejectTmp, contract.getStudentApplication().getOffer().getTitle(),</span>
+<span class="fc" id="L91">                contract.getStudentApplication().getOffer().getEmployer().getContactName(),</span>
+<span class="fc" id="L92">                contract.getStudentApplication().getOffer().getEmployer().getCompanyName());</span>
+
+<span class="fc" id="L94">        final var signedTmp = &quot;O contrato de oferta de %s para o aluno %s %s foi assinado por todas as partes interessadas&quot;;</span>
+<span class="fc" id="L95">        final var signedMsg = String.format(signedTmp, contract.getStudentApplication().getOffer().getTitle(),</span>
+<span class="fc" id="L96">                contract.getStudentApplication().getStudent().getFirstName(),</span>
+<span class="fc" id="L97">                contract.getStudentApplication().getStudent().getLastName());</span>
+
+<span class="fc bfc" id="L99" title="All 6 branches covered.">        switch (contract.getSignatureState()) {</span>
+            case WAITING_FOR_EMPLOYER_SIGNATURE:
+<span class="fc" id="L101">                notifSvc.notify(contract.getStudentApplication().getOffer().getEmployer().getId(), signMsg);</span>
+<span class="fc" id="L102">                break;</span>
+            case REJECTED_BY_EMPLOYER:
+<span class="fc" id="L104">                notifSvc.notify(contract.getStudentApplication().getStudent().getId(), rejectMsg);</span>
+<span class="fc" id="L105">                notifSvc.notify(contract.getAdmin().getId(), rejectMsg);</span>
+<span class="fc" id="L106">                break;</span>
+            case WAITING_FOR_STUDENT_SIGNATURE:
+<span class="fc" id="L108">                notifSvc.notify(contract.getStudentApplication().getStudent().getId(), signStudentMsg);</span>
+<span class="fc" id="L109">                break;</span>
+            case WAITING_FOR_ADMIN_SIGNATURE:
+<span class="fc" id="L111">                notifSvc.notify(contract.getAdmin().getId(), signMsg);</span>
+<span class="fc" id="L112">                break;</span>
+            case SIGNED:
+<span class="fc" id="L114">                notifSvc.notify(contract.getAdmin().getId(), signedMsg);</span>
+<span class="fc" id="L115">                notifSvc.notify(contract.getStudentApplication().getStudent().getId(), signedMsg);</span>
+<span class="fc" id="L116">                notifSvc.notify(contract.getStudentApplication().getOffer().getEmployer().getId(), signedMsg);</span>
+<span class="fc" id="L117">                break;</span>
+            default:
+<span class="fc" id="L119">                throw new IllegalStateException(&quot;State of contract not part of ContractSignatureState: &quot; + contract.getSignatureState());</span>
+        }
+<span class="fc" id="L121">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>User.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">The Ultimate Internship Manager Software Platform For College And University Plus Powered By Java</a> &gt; <a href="index.source.html" class="el_package">com.power222.tuimspfcauppbj.model</a> &gt; <span class="el_source">User.java</span></div><h1>User.java</h1><pre class="source lang-java linenums">package com.power222.tuimspfcauppbj.model;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+
+import javax.persistence.*;
+
+<span class="pc bpc" id="L11" title="16 of 38 branches missed.">@Data</span>
+<span class="pc" id="L12">@SuperBuilder</span>
+<span class="fc" id="L13">@NoArgsConstructor</span>
+<span class="nc" id="L14">@AllArgsConstructor</span>
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+<span class="fc" id="L21">    private Long id;</span>
+
+    @Column(unique = true)
+<span class="fc" id="L24">    private String email;</span>
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+<span class="fc" id="L27">    private String password;</span>
+
+<span class="fc" id="L29">    private boolean passwordExpired;</span>
+<span class="fc" id="L30">    private boolean disabled;</span>
+
+    public abstract String getFullName();
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

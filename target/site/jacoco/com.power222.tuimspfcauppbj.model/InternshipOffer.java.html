@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InternshipOffer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">The Ultimate Internship Manager Software Platform For College And University Plus Powered By Java</a> &gt; <a href="index.source.html" class="el_package">com.power222.tuimspfcauppbj.model</a> &gt; <span class="el_source">InternshipOffer.java</span></div><h1>InternshipOffer.java</h1><pre class="source lang-java linenums">package com.power222.tuimspfcauppbj.model;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.power222.tuimspfcauppbj.util.ReviewState;
+import lombok.*;
+import lombok.Builder.Default;
+import lombok.experimental.SuperBuilder;
+
+import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+
+<span class="pc" id="L14">@Data</span>
+@Entity
+<span class="nc" id="L16">@AllArgsConstructor</span>
+<span class="fc" id="L17">@NoArgsConstructor</span>
+<span class="pc bfc" id="L18" title="All 2 branches covered.">@SuperBuilder(toBuilder = true)</span>
+<span class="pc bpc" id="L19" title="35 of 66 branches missed.">@EqualsAndHashCode(callSuper = true, exclude = &quot;applications&quot;)</span>
+public class InternshipOffer extends SemesterDiscriminatedEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+<span class="fc" id="L24">    private long id;</span>
+<span class="fc" id="L25">    private String title;</span>
+
+    @Embedded
+<span class="fc" id="L28">    private InternshipOfferDetails details;</span>
+
+    @Default
+<span class="fc" id="L31">    private ReviewState reviewState = ReviewState.PENDING;</span>
+<span class="fc" id="L32">    private String reasonForRejection;</span>
+
+    @Lob
+<span class="fc" id="L35">    private String file;</span>
+
+    @ManyToOne(optional = false)
+    @JsonIgnoreProperties(&quot;offers&quot;)
+<span class="fc" id="L39">    private Employer employer;</span>
+
+    @SuppressWarnings(&quot;JpaDataSourceORMInspection&quot;)
+    @ManyToMany
+    @JoinTable(name = &quot;OFFER_ALLOWED_STUDENT&quot;)
+    @JsonIgnoreProperties({&quot;applications&quot;, &quot;resumes&quot;, &quot;allowedOffers&quot;})
+<span class="fc" id="L45">    private List&lt;Student&gt; allowedStudents;</span>
+
+    @OneToMany(mappedBy = &quot;offer&quot;, cascade = CascadeType.ALL)
+    @JsonIgnoreProperties({&quot;offer&quot;})
+<span class="fc" id="L49">    private List&lt;StudentApplication&gt; applications;</span>
+
+    @Embeddable
+<span class="pc bpc" id="L52" title="42 of 66 branches missed.">    @Data</span>
+<span class="pc" id="L53">    @Builder</span>
+<span class="fc" id="L54">    @AllArgsConstructor</span>
+<span class="fc" id="L55">    @NoArgsConstructor</span>
+    public static class InternshipOfferDetails {
+<span class="fc" id="L57">        private String description;</span>
+<span class="fc" id="L58">        private LocalDate creationDate;</span>
+<span class="fc" id="L59">        private LocalDate limitDateToApply;</span>
+<span class="fc" id="L60">        private LocalDate internshipStartDate;</span>
+<span class="fc" id="L61">        private LocalDate internshipEndDate;</span>
+<span class="fc" id="L62">        private double salary;</span>
+<span class="fc" id="L63">        private int nbStudentToHire;</span>
+<span class="fc" id="L64">        private LocalTime startTime;</span>
+<span class="fc" id="L65">        private LocalTime endTime;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

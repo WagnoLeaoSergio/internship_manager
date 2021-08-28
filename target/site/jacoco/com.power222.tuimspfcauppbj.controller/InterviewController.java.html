@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InterviewController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">The Ultimate Internship Manager Software Platform For College And University Plus Powered By Java</a> &gt; <a href="index.source.html" class="el_package">com.power222.tuimspfcauppbj.controller</a> &gt; <span class="el_source">InterviewController.java</span></div><h1>InterviewController.java</h1><pre class="source lang-java linenums">package com.power222.tuimspfcauppbj.controller;
+
+import com.power222.tuimspfcauppbj.model.Interview;
+import com.power222.tuimspfcauppbj.service.InterviewService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/api/interviews&quot;)
+public class InterviewController {
+    private final InterviewService svc;
+
+<span class="fc" id="L16">    public InterviewController(InterviewService svc) {</span>
+<span class="fc" id="L17">        this.svc = svc;</span>
+<span class="fc" id="L18">    }</span>
+
+    @GetMapping
+    public List&lt;Interview&gt; getAllInterviews() {
+<span class="fc" id="L22">        return svc.getAllInterviews();</span>
+    }
+
+    @GetMapping(&quot;/employer/{id}&quot;)
+    public List&lt;Interview&gt; getInterviewsByEmployerId(@PathVariable long id) {
+<span class="fc" id="L27">        return svc.getAllInterviewsByEmployerId(id);</span>
+    }
+
+    @GetMapping(&quot;/student/{id}&quot;)
+    public List&lt;Interview&gt; getInterviewsByStudentId(@PathVariable long id) {
+<span class="fc" id="L32">        return svc.getAllInterviewsByStudentId(id);</span>
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Interview&gt; getInterview(@PathVariable long id) {
+<span class="fc" id="L37">        return svc.getInterviewById(id)</span>
+<span class="fc" id="L38">                .map(ResponseEntity::ok)</span>
+<span class="fc" id="L39">                .orElse(ResponseEntity.notFound().build());</span>
+    }
+
+    @PostMapping
+    public ResponseEntity&lt;Interview&gt; createInterview(@RequestBody Interview newInterview) {
+<span class="fc" id="L44">        return svc.persistNewInterview(newInterview)</span>
+<span class="fc" id="L45">                .map(resume -&gt; ResponseEntity.status(HttpStatus.CREATED).body(resume))</span>
+<span class="fc" id="L46">                .orElse(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());</span>
+    }
+
+    @PutMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Interview&gt; updateInterview(@PathVariable long id, @RequestBody Interview requestBody) {
+<span class="fc" id="L51">        return svc.updateInterview(id, requestBody)</span>
+<span class="fc" id="L52">                .map(ResponseEntity::ok)</span>
+<span class="fc" id="L53">                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());</span>
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public void deleteInterview(@PathVariable long id) {
+<span class="fc" id="L58">        svc.deleteInterviewById(id);</span>
+<span class="fc" id="L59">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

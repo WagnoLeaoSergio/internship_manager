@@ -1,5 +1,8 @@
-## Getting started
-
-- Recommended `node js 14+` and `npm 6+`
-- Install dependencies: `npm install` or `yarn install`
-- Start the server: `npm run start` or `yarn start`
+![alt text](https://github.com/ismailghedamsi/InternshipManager/blob/cool-ass-css/screenshoots/login.png)
+![alt text](https://github.com/ismailghedamsi/InternshipManager/blob/cool-ass-css/screenshoots/register.png)
+![alt text](https://github.com/ismailghedamsi/InternshipManager/blob/cool-ass-css/screenshoots/acceuil_etudiant.png)
+![alt text](https://github.com/ismailghedamsi/InternshipManager/blob/cool-ass-css/screenshoots/appliquer_offre_stage.png)
+![alt text](https://github.com/ismailghedamsi/InternshipManager/blob/cool-ass-css/screenshoots/approuver_cv.png)
+![alt text](https://github.com/ismailghedamsi/InternshipManager/blob/cool-ass-css/screenshoots/assignation_offre.png)
+![alt text](https://github.com/ismailghedamsi/InternshipManager/blob/cool-ass-css/screenshoots/choixx_cv_application.png)
+![alt text](https://github.com/ismailghedamsi/InternshipManager/blob/cool-ass-css/screenshoots/evaluation_etudiant.png)

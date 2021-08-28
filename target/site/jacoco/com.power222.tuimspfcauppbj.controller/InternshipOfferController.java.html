@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InternshipOfferController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">The Ultimate Internship Manager Software Platform For College And University Plus Powered By Java</a> &gt; <a href="index.source.html" class="el_package">com.power222.tuimspfcauppbj.controller</a> &gt; <span class="el_source">InternshipOfferController.java</span></div><h1>InternshipOfferController.java</h1><pre class="source lang-java linenums">package com.power222.tuimspfcauppbj.controller;
+
+import com.power222.tuimspfcauppbj.model.InternshipOffer;
+import com.power222.tuimspfcauppbj.service.InternshipOfferService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/api/offers&quot;)
+public class InternshipOfferController {
+    private final InternshipOfferService offerService;
+
+<span class="fc" id="L16">    public InternshipOfferController(InternshipOfferService offerService) {</span>
+<span class="fc" id="L17">        this.offerService = offerService;</span>
+<span class="fc" id="L18">    }</span>
+
+    @GetMapping
+    public List&lt;InternshipOffer&gt; getAllOffers() {
+<span class="fc" id="L22">        return offerService.getAllInternshipOffers();</span>
+    }
+
+    @GetMapping(&quot;/student/{id}&quot;)
+    public List&lt;InternshipOffer&gt; getOfferByAllowedStudentId(@PathVariable long id) {
+<span class="fc" id="L27">        return offerService.getOfferByAllowedStudentId(id);</span>
+    }
+
+    @GetMapping(&quot;/pending&quot;)
+    public List&lt;InternshipOffer&gt; getOffersWithPendingApproval() {
+<span class="fc" id="L32">        return offerService.getInternshipOffersWithPendingApproval();</span>
+    }
+
+    @GetMapping(&quot;/approved&quot;)
+    public List&lt;InternshipOffer&gt; getApprovedOffers() {
+<span class="fc" id="L37">        return offerService.getApprovedInternshipOffers();</span>
+    }
+
+    @GetMapping(&quot;/employer/{username}&quot;)
+    public List&lt;InternshipOffer&gt; getOffersByEmployerUsername(@PathVariable String username) {
+<span class="fc" id="L42">        return offerService.getInternshipOffersOfEmployer(username);</span>
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;InternshipOffer&gt; getOffer(@PathVariable long id) {
+<span class="fc" id="L47">        return offerService.getInternshipOfferById(id)</span>
+<span class="fc" id="L48">                .map(ResponseEntity::ok)</span>
+<span class="fc" id="L49">                .orElse(ResponseEntity.notFound().build());</span>
+    }
+
+    @PostMapping
+    public ResponseEntity&lt;InternshipOffer&gt; createOffer(@RequestBody InternshipOffer newOffer) {
+<span class="fc" id="L54">        return offerService.createInternshipOffer(newOffer)</span>
+<span class="fc" id="L55">                .map(offer -&gt; ResponseEntity.status(HttpStatus.CREATED).body(offer))</span>
+<span class="fc" id="L56">                .orElse(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());</span>
+    }
+
+    @PutMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;InternshipOffer&gt; updateOffer(@RequestBody InternshipOffer offer, @PathVariable long id) {
+<span class="fc" id="L61">        return offerService.updateInternshipOffer(id, offer)</span>
+<span class="fc" id="L62">                .map(ResponseEntity::ok)</span>
+<span class="fc" id="L63">                .orElse(ResponseEntity.status(HttpStatus.CONFLICT).build());</span>
+    }
+
+    @PutMapping(&quot;/{offerId}/addRemoveStudent/{studentId}&quot;)
+    public ResponseEntity&lt;InternshipOffer&gt; switchOfferVisibilityForStudent(@PathVariable long offerId, @PathVariable long studentId) {
+<span class="fc" id="L68">        return offerService.switchOfferVisibilityForStudent(offerId, studentId)</span>
+<span class="fc" id="L69">                .map(ResponseEntity::ok)</span>
+<span class="fc" id="L70">                .orElse(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());</span>
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public void deleteOffer(@PathVariable long id) {
+<span class="fc" id="L75">        offerService.deleteOfferById(id);</span>
+<span class="fc" id="L76">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

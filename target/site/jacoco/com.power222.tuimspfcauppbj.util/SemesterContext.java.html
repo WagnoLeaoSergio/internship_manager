@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SemesterContext.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">The Ultimate Internship Manager Software Platform For College And University Plus Powered By Java</a> &gt; <a href="index.source.html" class="el_package">com.power222.tuimspfcauppbj.util</a> &gt; <span class="el_source">SemesterContext.java</span></div><h1>SemesterContext.java</h1><pre class="source lang-java linenums">package com.power222.tuimspfcauppbj.util;
+
+import java.time.LocalDate;
+
+public final class SemesterContext {
+
+    private SemesterContext() {
+    }
+
+<span class="fc" id="L10">    private static final ThreadLocal&lt;String&gt; CURRENT_SEMESTER = new ThreadLocal&lt;&gt;();</span>
+
+    public static String getCurrent() {
+<span class="fc" id="L13">        return CURRENT_SEMESTER.get();</span>
+    }
+
+    public static void setCurrent(String value) {
+<span class="fc" id="L17">        CURRENT_SEMESTER.set(value);</span>
+<span class="fc" id="L18">    }</span>
+
+    public static boolean isSet() {
+<span class="fc bfc" id="L21" title="All 2 branches covered.">        return CURRENT_SEMESTER.get() != null;</span>
+    }
+
+    public static String getPresentSemester() {
+<span class="fc" id="L25">        var date = LocalDate.now();</span>
+<span class="pc bpc" id="L26" title="1 of 2 branches missed.">        if (date.getMonthValue() &gt; 8)</span>
+<span class="nc" id="L27">            return &quot;a&quot; + date.getYear() + &quot;h&quot; + (date.getYear() + 1);</span>
+        else
+<span class="fc" id="L29">            return &quot;a&quot; + (date.getYear() - 1) + &quot;h&quot; + date.getYear();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InternshipOfferService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">The Ultimate Internship Manager Software Platform For College And University Plus Powered By Java</a> &gt; <a href="index.source.html" class="el_package">com.power222.tuimspfcauppbj.service</a> &gt; <span class="el_source">InternshipOfferService.java</span></div><h1>InternshipOfferService.java</h1><pre class="source lang-java linenums">package com.power222.tuimspfcauppbj.service;
+
+import com.power222.tuimspfcauppbj.dao.InternshipOfferRepository;
+import com.power222.tuimspfcauppbj.dao.StudentRepository;
+import com.power222.tuimspfcauppbj.model.Employer;
+import com.power222.tuimspfcauppbj.model.InternshipOffer;
+import com.power222.tuimspfcauppbj.model.Student;
+import com.power222.tuimspfcauppbj.util.ReviewState;
+import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class InternshipOfferService {
+
+    private final InternshipOfferRepository offerRepo;
+    private final AuthenticationService authSvc;
+    private final StudentRepository studentRepo;
+    private final NotificationService notifSvc;
+
+<span class="fc" id="L23">    public InternshipOfferService(InternshipOfferRepository offerRepo, AuthenticationService authSvc, StudentRepository studentRepo, NotificationService notifSvc) {</span>
+<span class="fc" id="L24">        this.offerRepo = offerRepo;</span>
+<span class="fc" id="L25">        this.authSvc = authSvc;</span>
+<span class="fc" id="L26">        this.studentRepo = studentRepo;</span>
+<span class="fc" id="L27">        this.notifSvc = notifSvc;</span>
+<span class="fc" id="L28">    }</span>
+
+    public List&lt;InternshipOffer&gt; getAllInternshipOffers() {
+<span class="fc" id="L31">        return offerRepo.findAll();</span>
+    }
+
+    public List&lt;InternshipOffer&gt; getOfferByAllowedStudentId(long studentId) {
+<span class="fc" id="L35">        return offerRepo.findAllByAllowedStudentsId(studentId);</span>
+    }
+
+    public List&lt;InternshipOffer&gt; getInternshipOffersOfEmployer(String email) {
+<span class="fc" id="L39">        return offerRepo.findByEmployerEmail(email);</span>
+    }
+
+    public List&lt;InternshipOffer&gt; getInternshipOffersWithPendingApproval() {
+<span class="fc" id="L43">        return offerRepo.findAllByReviewStatePending();</span>
+    }
+
+    public List&lt;InternshipOffer&gt; getApprovedInternshipOffers() {
+<span class="fc" id="L47">        return offerRepo.findAllByReviewStateApproved();</span>
+    }
+
+    public Optional&lt;InternshipOffer&gt; getInternshipOfferById(long id) {
+<span class="fc" id="L51">        return offerRepo.findById(id);</span>
+    }
+
+    public Optional&lt;InternshipOffer&gt; createInternshipOffer(InternshipOffer offer) {
+<span class="fc" id="L55">        return Optional.ofNullable(authSvc.getCurrentUser())</span>
+<span class="fc" id="L56">                .filter(u -&gt; u instanceof Employer)</span>
+<span class="fc" id="L57">                .map(e -&gt; setOfferInitialState(offer, (Employer) e))</span>
+<span class="fc" id="L58">                .map(offerRepo::saveAndFlush)</span>
+<span class="fc" id="L59">                .map(o -&gt; {</span>
+<span class="fc" id="L60">                    notifSvc.notifyOfferCreation(o);</span>
+<span class="fc" id="L61">                    return o;</span>
+                });
+    }
+
+    public Optional&lt;InternshipOffer&gt; updateInternshipOffer(long id, InternshipOffer offer) {
+<span class="fc" id="L66">        return offerRepo.findById(id)</span>
+<span class="fc" id="L67">                .map(oldOffer -&gt; {</span>
+<span class="fc" id="L68">                    offer.setId(oldOffer.getId());</span>
+<span class="fc" id="L69">                    offer.setSemester(oldOffer.getSemester());</span>
+<span class="fc" id="L70">                    return offer;</span>
+                })
+<span class="fc" id="L72">                .filter(this::isOfferStateValid)</span>
+<span class="fc" id="L73">                .map(offerRepo::saveAndFlush)</span>
+<span class="fc" id="L74">                .map(o -&gt; {</span>
+<span class="fc" id="L75">                    notifSvc.notifyOfferUpdate(o);</span>
+<span class="fc" id="L76">                    return o;</span>
+                });
+    }
+
+    public Optional&lt;InternshipOffer&gt; switchOfferVisibilityForStudent(long offerId, long studentId) {
+<span class="fc" id="L81">        return offerRepo.findById(offerId)</span>
+<span class="fc" id="L82">                .flatMap(offer -&gt; studentRepo.findById(studentId)</span>
+<span class="fc" id="L83">                        .map(student -&gt; getStudentInternshipOfferFunction(student, offer)));</span>
+    }
+
+    public void deleteOfferById(long id) {
+<span class="fc" id="L87">        offerRepo.deleteById(id);</span>
+<span class="fc" id="L88">    }</span>
+
+    private InternshipOffer getStudentInternshipOfferFunction(Student student, InternshipOffer offer) {
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        if (offer.getAllowedStudents().contains(student))</span>
+<span class="fc" id="L92">            offer.getAllowedStudents().remove(student);</span>
+        else {
+<span class="fc" id="L94">            offer.getAllowedStudents().add(student);</span>
+<span class="fc" id="L95">            notifSvc.notifyOfferAssigned(offer, student.getId());</span>
+        }
+
+<span class="fc" id="L98">        return offerRepo.saveAndFlush(offer);</span>
+    }
+
+    private boolean isOfferStateValid(InternshipOffer offer) {
+<span class="fc bfc" id="L102" title="All 2 branches covered.">        if (offer.getReviewState() == ReviewState.DENIED)</span>
+<span class="pc bpc" id="L103" title="1 of 4 branches missed.">            return (offer.getReasonForRejection() != null) &amp;&amp; !offer.getReasonForRejection().isBlank();</span>
+
+<span class="fc" id="L105">        return true;</span>
+    }
+
+    private InternshipOffer setOfferInitialState(InternshipOffer offer, Employer employer) {
+<span class="fc" id="L109">        employer.getOffers().add(offer);</span>
+<span class="fc" id="L110">        offer.setEmployer(employer);</span>
+<span class="fc" id="L111">        offer.setReviewState(ReviewState.PENDING);</span>
+<span class="fc" id="L112">        offer.setAllowedStudents(Collections.emptyList());</span>
+<span class="fc" id="L113">        return offer;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

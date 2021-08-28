@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NotificationController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">The Ultimate Internship Manager Software Platform For College And University Plus Powered By Java</a> &gt; <a href="index.source.html" class="el_package">com.power222.tuimspfcauppbj.controller</a> &gt; <span class="el_source">NotificationController.java</span></div><h1>NotificationController.java</h1><pre class="source lang-java linenums">package com.power222.tuimspfcauppbj.controller;
+
+import com.power222.tuimspfcauppbj.model.Notification;
+import com.power222.tuimspfcauppbj.service.RsocketNotificationService;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.stereotype.Controller;
+import reactor.core.publisher.Flux;
+
+import java.util.UUID;
+
+@Controller
+public class NotificationController {
+
+    private final RsocketNotificationService svc;
+
+<span class="fc" id="L17">    public NotificationController(RsocketNotificationService svc) {</span>
+<span class="fc" id="L18">        this.svc = svc;</span>
+<span class="fc" id="L19">    }</span>
+
+    @MessageMapping(&quot;notif/{userId}&quot;)
+    public Flux&lt;Notification&gt; notifications(Flux&lt;UUID&gt; acknowledgements, @DestinationVariable long userId) {
+<span class="nc" id="L23">        svc.subscribeToAcks(acknowledgements);</span>
+
+<span class="nc" id="L25">        return svc.subscribeForUser(userId);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

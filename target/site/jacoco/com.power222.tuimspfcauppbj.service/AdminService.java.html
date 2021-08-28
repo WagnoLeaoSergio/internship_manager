@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AdminService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">The Ultimate Internship Manager Software Platform For College And University Plus Powered By Java</a> &gt; <a href="index.source.html" class="el_package">com.power222.tuimspfcauppbj.service</a> &gt; <span class="el_source">AdminService.java</span></div><h1>AdminService.java</h1><pre class="source lang-java linenums">package com.power222.tuimspfcauppbj.service;
+
+import com.power222.tuimspfcauppbj.dao.AdminRepository;
+import com.power222.tuimspfcauppbj.model.Admin;
+import com.power222.tuimspfcauppbj.util.PasswordDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+@Service
+public class AdminService {
+
+    private final AdminRepository repo;
+    private final PasswordEncoder encoder;
+
+<span class="fc" id="L19">    public AdminService(AdminRepository repo, PasswordEncoder encoder) {</span>
+<span class="fc" id="L20">        this.repo = repo;</span>
+<span class="fc" id="L21">        this.encoder = encoder;</span>
+<span class="fc" id="L22">    }</span>
+
+    public Page&lt;Admin&gt; getAllAdmins(int page, int itemsPerPage) {
+<span class="fc" id="L25">        return repo.findAll(PageRequest.of(page, itemsPerPage));</span>
+    }
+
+    public Optional&lt;Admin&gt; createAdmin(Admin admin) {
+<span class="fc" id="L29">        return Optional.of(admin)</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">                .filter(a -&gt; !repo.existsByEmail(a.getEmail()))</span>
+<span class="fc" id="L31">                .map(a -&gt; {</span>
+<span class="fc" id="L32">                    a.setPassword(encoder.encode(a.getPassword()));</span>
+<span class="fc" id="L33">                    a.setPasswordExpired(true);</span>
+<span class="fc" id="L34">                    return a;</span>
+                })
+<span class="fc" id="L36">                .map(repo::saveAndFlush);</span>
+    }
+
+    public Optional&lt;Admin&gt; toggleDisabledAdmin(long adminId) {
+<span class="fc" id="L40">        return repo.findById(adminId)</span>
+<span class="fc" id="L41">                .map(a -&gt; {</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">                    a.setDisabled(!a.isDisabled());</span>
+<span class="fc" id="L43">                    return a;</span>
+                })
+<span class="fc" id="L45">                .map(repo::saveAndFlush);</span>
+    }
+
+    public Optional&lt;Admin&gt; updateUserPassword(PasswordDTO dto) {
+<span class="fc" id="L49">        return repo.findByEmail(dto.getUsername())</span>
+<span class="fc" id="L50">                .map(a -&gt; {</span>
+<span class="fc" id="L51">                    a.setPassword(encoder.encode(dto.getNewPassword()));</span>
+<span class="fc" id="L52">                    return a;</span>
+                })
+<span class="fc" id="L54">                .map(repo::saveAndFlush);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

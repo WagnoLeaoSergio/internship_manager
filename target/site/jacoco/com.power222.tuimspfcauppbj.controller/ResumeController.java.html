@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ResumeController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">The Ultimate Internship Manager Software Platform For College And University Plus Powered By Java</a> &gt; <a href="index.source.html" class="el_package">com.power222.tuimspfcauppbj.controller</a> &gt; <span class="el_source">ResumeController.java</span></div><h1>ResumeController.java</h1><pre class="source lang-java linenums">package com.power222.tuimspfcauppbj.controller;
+
+import com.power222.tuimspfcauppbj.model.Resume;
+import com.power222.tuimspfcauppbj.service.ResumeService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/api/resumes&quot;)
+public class ResumeController {
+    private final ResumeService svc;
+
+<span class="fc" id="L16">    public ResumeController(ResumeService svc) {</span>
+<span class="fc" id="L17">        this.svc = svc;</span>
+<span class="fc" id="L18">    }</span>
+
+    @GetMapping
+    public List&lt;Resume&gt; getAllResumes() {
+<span class="fc" id="L22">        return svc.getAllResumes();</span>
+    }
+
+    @GetMapping(&quot;/pending&quot;)
+    public List&lt;Resume&gt; getResumesWithPendingApproval() {
+<span class="fc" id="L27">        return svc.getResumeWithPendingApproval();</span>
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Resume&gt; getResume(@PathVariable long id) {
+<span class="fc" id="L32">        return svc.getResumeById(id)</span>
+<span class="fc" id="L33">                .map(ResponseEntity::ok)</span>
+<span class="fc" id="L34">                .orElse(ResponseEntity.notFound().build());</span>
+    }
+
+    @GetMapping(&quot;/student/{id}&quot;)
+    public List&lt;Resume&gt; getResumesByOwnerId(@PathVariable long id) {
+<span class="fc" id="L39">        return svc.getResumesByOwnerId(id);</span>
+    }
+
+    @PostMapping
+    public ResponseEntity&lt;Resume&gt; createResume(@RequestBody Resume newResume) {
+<span class="fc" id="L44">        return svc.persistNewResume(newResume)</span>
+<span class="fc" id="L45">                .map(resume -&gt; ResponseEntity.status(HttpStatus.CREATED).body(resume))</span>
+<span class="fc" id="L46">                .orElse(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());</span>
+    }
+
+    @PutMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Resume&gt; updateResume(@RequestBody Resume requestBody, @PathVariable long id) {
+<span class="fc" id="L51">        return svc.updateResume(id, requestBody)</span>
+<span class="fc" id="L52">                .map(ResponseEntity::ok)</span>
+<span class="fc" id="L53">                .orElse(ResponseEntity.status(HttpStatus.CONFLICT).build());</span>
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public void deleteResume(@PathVariable long id) {
+<span class="fc" id="L58">        svc.deleteResumeById(id);</span>
+<span class="fc" id="L59">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

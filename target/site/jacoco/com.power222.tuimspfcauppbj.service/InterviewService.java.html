@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InterviewService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">The Ultimate Internship Manager Software Platform For College And University Plus Powered By Java</a> &gt; <a href="index.source.html" class="el_package">com.power222.tuimspfcauppbj.service</a> &gt; <span class="el_source">InterviewService.java</span></div><h1>InterviewService.java</h1><pre class="source lang-java linenums">package com.power222.tuimspfcauppbj.service;
+
+import com.power222.tuimspfcauppbj.dao.InterviewRepository;
+import com.power222.tuimspfcauppbj.model.Employer;
+import com.power222.tuimspfcauppbj.model.Interview;
+import com.power222.tuimspfcauppbj.model.User;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class InterviewService {
+    private final InterviewRepository interviewRepo;
+    private final AuthenticationService authSvc;
+
+<span class="fc" id="L18">    public InterviewService(InterviewRepository interviewRepo, AuthenticationService authSvc) {</span>
+<span class="fc" id="L19">        this.interviewRepo = interviewRepo;</span>
+<span class="fc" id="L20">        this.authSvc = authSvc;</span>
+<span class="fc" id="L21">    }</span>
+
+    public List&lt;Interview&gt; getAllInterviews() {
+<span class="fc" id="L24">        return interviewRepo.findAll();</span>
+    }
+
+    public List&lt;Interview&gt; getAllInterviewsByEmployerId(long id) {
+<span class="fc" id="L28">        return interviewRepo.findAllByStudentApplication_Offer_Employer_Id(id);</span>
+    }
+
+    public List&lt;Interview&gt; getAllInterviewsByStudentId(long id) {
+<span class="fc" id="L32">        return interviewRepo.findAllByStudentApplication_Student_Id(id);</span>
+    }
+
+    public Optional&lt;Interview&gt; getInterviewById(long id) {
+<span class="fc" id="L36">        return interviewRepo.findById(id);</span>
+    }
+
+    public Optional&lt;Interview&gt; persistNewInterview(Interview interview) {
+<span class="fc" id="L40">        User currentUser = authSvc.getCurrentUser();</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if (currentUser instanceof Employer) {</span>
+<span class="fc" id="L42">            return Optional.of(interviewRepo.saveAndFlush(interview));</span>
+        } else
+<span class="fc" id="L44">            return Optional.empty();</span>
+    }
+
+    public Optional&lt;Interview&gt; updateInterview(long id, Interview interview) {
+<span class="fc" id="L48">        return interviewRepo.findById(id)</span>
+<span class="fc" id="L49">                .map(oldInterview -&gt; interview.toBuilder()</span>
+<span class="fc" id="L50">                        .id(oldInterview.getId())</span>
+<span class="fc" id="L51">                        .semester(oldInterview.getSemester())</span>
+<span class="fc" id="L52">                        .build())</span>
+<span class="fc" id="L53">                .map(newInterview -&gt; interviewRepo.saveAndFlush(interview));</span>
+    }
+
+    @Transactional
+    public void deleteInterviewById(long id) {
+<span class="fc" id="L58">        interviewRepo.deleteById(id);</span>
+<span class="fc" id="L59">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

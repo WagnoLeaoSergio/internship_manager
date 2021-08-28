@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InternshipOfferRepository.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">The Ultimate Internship Manager Software Platform For College And University Plus Powered By Java</a> &gt; <a href="index.source.html" class="el_package">com.power222.tuimspfcauppbj.dao</a> &gt; <span class="el_source">InternshipOfferRepository.java</span></div><h1>InternshipOfferRepository.java</h1><pre class="source lang-java linenums">package com.power222.tuimspfcauppbj.dao;
+
+import com.power222.tuimspfcauppbj.model.InternshipOffer;
+import com.power222.tuimspfcauppbj.util.ReviewState;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface InternshipOfferRepository extends JpaRepository&lt;InternshipOffer, Long&gt; {
+
+    List&lt;InternshipOffer&gt; findByEmployerEmail(String email);
+
+    List&lt;InternshipOffer&gt; findAllByAllowedStudentsId(long id);
+
+    List&lt;InternshipOffer&gt; findAllByReviewState(ReviewState reviewState);
+
+    Page&lt;InternshipOffer&gt; findAllByReviewState(ReviewState reviewState, Pageable pageable);
+
+    @Query(&quot;select o from InternshipOffer o where not exists (select a from o.applications a where a.state = com.power222.tuimspfcauppbj.util.StudentApplicationState.JOB_OFFER_ACCEPTED_BY_STUDENT)&quot;)
+    Page&lt;InternshipOffer&gt; findAllByApplicationsStateNotAccepted(Pageable pageable);
+
+    default List&lt;InternshipOffer&gt; findAllByReviewStatePending() {
+<span class="nc" id="L28">        return findAllByReviewState(ReviewState.PENDING);</span>
+    }
+
+    default List&lt;InternshipOffer&gt; findAllByReviewStateApproved() {
+<span class="nc" id="L32">        return findAllByReviewState(ReviewState.APPROVED);</span>
+    }
+
+    default Page&lt;InternshipOffer&gt; findAllByReviewStatePending(Pageable pageable) {
+<span class="nc" id="L36">        return findAllByReviewState(ReviewState.PENDING, pageable);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

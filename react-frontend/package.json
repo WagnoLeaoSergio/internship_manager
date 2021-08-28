@@ -1,0 +1,49 @@
+{
+  "name": "react-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@date-io/date-fns": "1.x",
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/pickers": "^3.2.10",
+    "axios": "^0.20.0",
+    "bootstrap": "^4.5.2",
+    "date-fns": "2.11.1",
+    "formik": "^2.1.5",
+    "formik-material-ui": "^3.0.0",
+    "formik-material-ui-pickers": "0.0.11",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-pdf": "^5.0.0",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "^4.0.1",
+    "rsocket-core": "^0.0.19",
+    "rsocket-flowable": "^0.0.14",
+    "rsocket-websocket-client": "^0.0.19",
+    "yup": "^0.29.3"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build && xcopy build\\* ..\\src\\main\\resources\\static /E /H"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@material-ui/styles": "^4.10.0",
+    "prop-types": "^15.7.2"
+  }
+}

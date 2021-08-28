@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StudentApplicationService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">The Ultimate Internship Manager Software Platform For College And University Plus Powered By Java</a> &gt; <a href="index.source.html" class="el_package">com.power222.tuimspfcauppbj.service</a> &gt; <span class="el_source">StudentApplicationService.java</span></div><h1>StudentApplicationService.java</h1><pre class="source lang-java linenums">package com.power222.tuimspfcauppbj.service;
+
+import com.power222.tuimspfcauppbj.dao.InternshipOfferRepository;
+import com.power222.tuimspfcauppbj.dao.ResumeRepository;
+import com.power222.tuimspfcauppbj.dao.StudentApplicationRepository;
+import com.power222.tuimspfcauppbj.model.Student;
+import com.power222.tuimspfcauppbj.model.StudentApplication;
+import com.power222.tuimspfcauppbj.util.ContractSignatureState;
+import com.power222.tuimspfcauppbj.util.StudentApplicationState;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class StudentApplicationService {
+
+    private final StudentApplicationRepository appliRepo;
+    private final InternshipOfferRepository offerRepo;
+    private final ResumeRepository resumeRepo;
+    private final AuthenticationService authSvc;
+
+<span class="fc" id="L25">    public StudentApplicationService(StudentApplicationRepository appliRepo, InternshipOfferRepository offerRepo, ResumeRepository resumeRepo, AuthenticationService authSvc) {</span>
+<span class="fc" id="L26">        this.appliRepo = appliRepo;</span>
+<span class="fc" id="L27">        this.offerRepo = offerRepo;</span>
+<span class="fc" id="L28">        this.resumeRepo = resumeRepo;</span>
+<span class="fc" id="L29">        this.authSvc = authSvc;</span>
+<span class="fc" id="L30">    }</span>
+
+    public List&lt;StudentApplication&gt; getAllApplication() {
+<span class="fc" id="L33">        return appliRepo.findAll();</span>
+    }
+
+    public List&lt;StudentApplication&gt; getAllContractsWaitingForAdmin() {
+<span class="fc" id="L37">        var set = new HashSet&lt;StudentApplication&gt;();</span>
+<span class="fc" id="L38">        set.addAll(appliRepo.findAllByStateAndContractIsNull(StudentApplicationState.JOB_OFFER_ACCEPTED_BY_STUDENT));</span>
+<span class="fc" id="L39">        set.addAll(appliRepo.findAllByContractSignatureState(ContractSignatureState.WAITING_FOR_ADMIN_SIGNATURE));</span>
+<span class="fc" id="L40">        return new ArrayList&lt;&gt;(set);</span>
+    }
+
+    public Optional&lt;StudentApplication&gt; getApplicationById(long id) {
+<span class="fc" id="L44">        return appliRepo.findById(id);</span>
+    }
+
+    public Optional&lt;StudentApplication&gt; createAndSaveNewApplication(long offerId, long resumeId) {
+<span class="fc" id="L48">        var currentUser = authSvc.getCurrentUser();</span>
+<span class="fc" id="L49">        var offer = offerRepo.findById(offerId);</span>
+<span class="fc" id="L50">        var resume = resumeRepo.findById(resumeId);</span>
+<span class="pc bpc" id="L51" title="2 of 6 branches missed.">        if ((currentUser instanceof Student) &amp;&amp; offer.isPresent() &amp;&amp; resume.isPresent()) {</span>
+<span class="fc" id="L52">            return Optional.of(appliRepo.saveAndFlush(StudentApplication.builder()</span>
+<span class="fc" id="L53">                    .student((Student) currentUser)</span>
+<span class="fc" id="L54">                    .offer(offer.get())</span>
+<span class="fc" id="L55">                    .state(StudentApplicationState.APPLICATION_PENDING_FOR_EMPLOYER_INITIAL_REVIEW)</span>
+<span class="fc" id="L56">                    .reasonForRejection(&quot;&quot;)</span>
+<span class="fc" id="L57">                    .resume(resume.get())</span>
+<span class="fc" id="L58">                    .build()));</span>
+        } else
+<span class="fc" id="L60">            return Optional.empty();</span>
+    }
+
+    public Optional&lt;StudentApplication&gt; updateStudentApplicationState(long id, StudentApplication tempApplication) {
+<span class="fc" id="L64">        return appliRepo.findById(id)</span>
+<span class="fc" id="L65">                .map(application -&gt; {</span>
+<span class="fc" id="L66">                    application.setState(tempApplication.getState());</span>
+<span class="fc" id="L67">                    application.setReasonForRejection(tempApplication.getReasonForRejection());</span>
+<span class="fc" id="L68">                    return appliRepo.saveAndFlush(application);</span>
+                });
+    }
+
+    public StudentApplication updateStudentApplication(long id, StudentApplication newApplication) {
+<span class="fc" id="L73">        return appliRepo.findById(id)</span>
+<span class="fc" id="L74">                .map(oldApplication -&gt; {</span>
+<span class="fc" id="L75">                    newApplication.setId(oldApplication.getId());</span>
+<span class="fc" id="L76">                    newApplication.setSemester(oldApplication.getSemester());</span>
+<span class="fc" id="L77">                    return appliRepo.saveAndFlush(newApplication);</span>
+                })
+<span class="fc" id="L79">                .orElse(newApplication);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

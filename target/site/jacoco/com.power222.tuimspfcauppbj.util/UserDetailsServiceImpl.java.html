@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserDetailsServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">The Ultimate Internship Manager Software Platform For College And University Plus Powered By Java</a> &gt; <a href="index.source.html" class="el_package">com.power222.tuimspfcauppbj.util</a> &gt; <span class="el_source">UserDetailsServiceImpl.java</span></div><h1>UserDetailsServiceImpl.java</h1><pre class="source lang-java linenums">package com.power222.tuimspfcauppbj.util;
+
+import com.power222.tuimspfcauppbj.dao.UserRepository;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import javax.transaction.Transactional;
+
+public class UserDetailsServiceImpl implements UserDetailsService {
+
+    private final UserRepository userRepository;
+
+<span class="fc" id="L13">    public UserDetailsServiceImpl(UserRepository userRepository) {</span>
+<span class="fc" id="L14">        this.userRepository = userRepository;</span>
+<span class="fc" id="L15">    }</span>
+
+    @Override
+    @Transactional
+    public UserDetailsImpl loadUserByUsername(String username) throws UsernameNotFoundException {
+<span class="fc" id="L20">        var user = userRepository.findByEmail(username);</span>
+<span class="fc bfc" id="L21" title="All 2 branches covered.">        if (user.isEmpty())</span>
+<span class="fc" id="L22">            throw new UsernameNotFoundException(&quot;Could not find user&quot;);</span>
+
+<span class="fc" id="L24">        return new UserDetailsImpl(user.get());</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

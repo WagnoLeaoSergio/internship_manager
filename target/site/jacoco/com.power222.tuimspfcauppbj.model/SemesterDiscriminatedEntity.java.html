@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SemesterDiscriminatedEntity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">The Ultimate Internship Manager Software Platform For College And University Plus Powered By Java</a> &gt; <a href="index.source.html" class="el_package">com.power222.tuimspfcauppbj.model</a> &gt; <span class="el_source">SemesterDiscriminatedEntity.java</span></div><h1>SemesterDiscriminatedEntity.java</h1><pre class="source lang-java linenums">package com.power222.tuimspfcauppbj.model;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import com.power222.tuimspfcauppbj.util.SemesterContext;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
+
+import javax.persistence.MappedSuperclass;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+
+<span class="pc bpc" id="L18" title="8 of 14 branches missed.">@Data</span>
+<span class="pc" id="L19">@SuperBuilder(toBuilder = true)</span>
+<span class="fc" id="L20">@NoArgsConstructor</span>
+<span class="nc" id="L21">@AllArgsConstructor</span>
+@MappedSuperclass
+@FilterDef(name = &quot;semesterFilter&quot;, parameters = {@ParamDef(name = &quot;semester&quot;, type = &quot;string&quot;)})
+@Filter(name = &quot;semesterFilter&quot;, condition = &quot;semester = :semester&quot;)
+public abstract class SemesterDiscriminatedEntity {
+
+    @JsonProperty(access = Access.READ_ONLY)
+<span class="fc" id="L28">    private String semester;</span>
+
+    @PrePersist
+    @PreUpdate
+    public void onPrePersist() {
+<span class="pc bpc" id="L33" title="2 of 4 branches missed.">        if ((semester == null) || semester.isBlank())</span>
+<span class="nc bnc" id="L34" title="All 2 branches missed.">            semester = SemesterContext.isSet() ? SemesterContext.getCurrent() : SemesterContext.getPresentSemester();</span>
+<span class="fc" id="L35">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

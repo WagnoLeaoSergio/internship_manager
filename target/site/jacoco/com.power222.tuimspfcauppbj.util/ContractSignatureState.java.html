@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ContractSignatureState.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">The Ultimate Internship Manager Software Platform For College And University Plus Powered By Java</a> &gt; <a href="index.source.html" class="el_package">com.power222.tuimspfcauppbj.util</a> &gt; <span class="el_source">ContractSignatureState.java</span></div><h1>ContractSignatureState.java</h1><pre class="source lang-java linenums">package com.power222.tuimspfcauppbj.util;
+
+<span class="fc" id="L3">public enum ContractSignatureState {</span>
+<span class="fc" id="L4">    PENDING_FOR_ADMIN_REVIEW,</span>
+<span class="fc" id="L5">    WAITING_FOR_EMPLOYER_SIGNATURE,</span>
+<span class="fc" id="L6">    REJECTED_BY_EMPLOYER,</span>
+<span class="fc" id="L7">    WAITING_FOR_STUDENT_SIGNATURE,</span>
+<span class="fc" id="L8">    WAITING_FOR_ADMIN_SIGNATURE,</span>
+<span class="fc" id="L9">    SIGNED;</span>
+
+    public static ContractSignatureState getNextState(ContractSignatureState signatureState, boolean isApproved) {
+<span class="fc bfc" id="L12" title="All 4 branches covered.">        switch (signatureState) {</span>
+            case PENDING_FOR_ADMIN_REVIEW:
+<span class="fc" id="L14">                return WAITING_FOR_EMPLOYER_SIGNATURE;</span>
+            case WAITING_FOR_EMPLOYER_SIGNATURE:
+<span class="fc bfc" id="L16" title="All 2 branches covered.">                if (isApproved)</span>
+<span class="fc" id="L17">                    return WAITING_FOR_STUDENT_SIGNATURE;</span>
+                else
+<span class="fc" id="L19">                    return REJECTED_BY_EMPLOYER;</span>
+            case WAITING_FOR_STUDENT_SIGNATURE:
+<span class="fc" id="L21">                return WAITING_FOR_ADMIN_SIGNATURE;</span>
+            case WAITING_FOR_ADMIN_SIGNATURE:
+            default:
+<span class="fc" id="L24">                return SIGNED;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

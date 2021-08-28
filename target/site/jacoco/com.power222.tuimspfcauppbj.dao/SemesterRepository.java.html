@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SemesterRepository.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">The Ultimate Internship Manager Software Platform For College And University Plus Powered By Java</a> &gt; <a href="index.source.html" class="el_package">com.power222.tuimspfcauppbj.dao</a> &gt; <span class="el_source">SemesterRepository.java</span></div><h1>SemesterRepository.java</h1><pre class="source lang-java linenums">package com.power222.tuimspfcauppbj.dao;
+
+import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
+
+@Repository
+<span class="fc" id="L10">public class SemesterRepository {</span>
+
+    @PersistenceContext
+    private EntityManager em;
+
+    @SuppressWarnings({&quot;unchecked&quot;, &quot;SqlDialectInspection&quot;, &quot;SqlNoDataSourceInspection&quot;})
+    public List&lt;String&gt; findAll() {
+<span class="nc" id="L17">        return em.createNativeQuery(&quot;SELECT DISTINCT semester from (SELECT semester FROM INTERNSHIP_OFFER &quot; +</span>
+                &quot;union all SELECT semester FROM INTERVIEW &quot; +
+                &quot;union all SELECT semester FROM STUDENT_APPLICATION &quot; +
+                &quot;union all SELECT semesters FROM EMPLOYER_SEMESTERS &quot; +
+                &quot;union all SELECT semesters FROM STUDENT_SEMESTERS)&quot;)
+<span class="nc" id="L22">                .getResultList();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

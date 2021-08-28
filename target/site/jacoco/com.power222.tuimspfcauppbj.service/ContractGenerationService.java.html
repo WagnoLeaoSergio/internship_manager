@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ContractGenerationService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">The Ultimate Internship Manager Software Platform For College And University Plus Powered By Java</a> &gt; <a href="index.source.html" class="el_package">com.power222.tuimspfcauppbj.service</a> &gt; <span class="el_source">ContractGenerationService.java</span></div><h1>ContractGenerationService.java</h1><pre class="source lang-java linenums">package com.power222.tuimspfcauppbj.service;
+
+import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.colors.WebColors;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.property.AreaBreakType;
+import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.UnitValue;
+import com.power222.tuimspfcauppbj.model.Admin;
+import com.power222.tuimspfcauppbj.model.Contract;
+import com.power222.tuimspfcauppbj.model.InternshipOffer;
+import com.power222.tuimspfcauppbj.model.StudentApplication;
+import com.power222.tuimspfcauppbj.util.ContractDTO;
+import com.power222.tuimspfcauppbj.util.ContractSignatureDTO;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.util.filetypedetector.FileType;
+import org.springframework.stereotype.Service;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.Base64;
+import java.util.Locale;
+import java.util.Optional;
+
+import static com.itextpdf.io.codec.Base64.encodeBytes;
+import static com.power222.tuimspfcauppbj.util.ContractSignatureState.PENDING_FOR_ADMIN_REVIEW;
+import static com.power222.tuimspfcauppbj.util.ContractSignatureState.getNextState;
+
+@SuppressWarnings(&quot;MagicNumber&quot;)
+@Service
+<span class="fc" id="L51">@Slf4j</span>
+public class ContractGenerationService {
+
+<span class="fc" id="L54">    public static final DateTimeFormatter DTF_WITH_TIME = DateTimeFormatter.ofPattern(&quot;dd-MM-yyyy HH:mm&quot;, Locale.US);</span>
+<span class="fc" id="L55">    public static final DateTimeFormatter DTF_WITHOUT_TIME = DateTimeFormatter.ofPattern(&quot;dd-MM-yyyy&quot;, Locale.US);</span>
+
+    private final ContractService contractService;
+    private final StudentApplicationService applicationService;
+    private final NotificationService notifService;
+    private final AuthenticationService authService;
+
+<span class="fc" id="L62">    public ContractGenerationService(ContractService contractService, StudentApplicationService applicationService, NotificationService notifService, final AuthenticationService authService) {</span>
+<span class="fc" id="L63">        this.contractService = contractService;</span>
+<span class="fc" id="L64">        this.applicationService = applicationService;</span>
+<span class="fc" id="L65">        this.notifService = notifService;</span>
+<span class="fc" id="L66">        this.authService = authService;</span>
+<span class="fc" id="L67">    }</span>
+
+    public boolean generateContract(ContractDTO contractDto) {
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if (!(authService.getCurrentUser() instanceof Admin))</span>
+<span class="fc" id="L71">            return false;</span>
+<span class="fc" id="L72">        return generateContract(contractDto, (Admin) authService.getCurrentUser());</span>
+    }
+
+    public boolean generateContract(ContractDTO contractDto, Admin admin) {
+<span class="fc" id="L76">        Optional&lt;StudentApplication&gt; optionalApplication = getStudentApplication(contractDto);</span>
+<span class="fc" id="L77">        ByteArrayOutputStream stream = null;</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        if (optionalApplication.isPresent()) {</span>
+<span class="fc" id="L79">            StudentApplication studentApplication = optionalApplication.get();</span>
+<span class="fc" id="L80">            stream = new ByteArrayOutputStream();</span>
+<span class="fc" id="L81">            PdfWriter writer = new PdfWriter(stream);</span>
+<span class="fc" id="L82">            PdfDocument pdf = new PdfDocument(writer);</span>
+<span class="fc" id="L83">            Document document = new Document(pdf, PageSize.A4);</span>
+
+<span class="fc" id="L85">            document.add(new Paragraph(&quot;CONTRATO DE ESTÁGIO&quot;).setBold().setFontSize(20).setTextAlignment(TextAlignment.CENTER).setMarginTop(document.getPageEffectiveArea(PageSize.A4).getHeight() / 2));</span>
+<span class="fc" id="L86">            document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));</span>
+<span class="fc" id="L87">            Paragraph paragraph = new Paragraph(new Text(&quot;ACORDO DE ESTÁGIO ENTRE AS SEGUINTES PARTES \n\n&quot;).setBold()).setPaddingTop(30f).add(new Text(&quot;As partes mencionadas abaixo: \n\n&quot;)).add(&quot;Coordenação de estágio, &quot; + admin.getName() + &quot;\n\n&quot;).add(new Text(&quot;e\n\n\n&quot;).setBold()).add(new Text(&quot;Supervisor de estágio, &quot; + studentApplication.getOffer().getEmployer().getCompanyName() + &quot;\n\n&quot;)).add(new Text(&quot;e\n\n\n&quot;).setBold()).add(new Text(&quot;Estudante, &quot; + studentApplication.getStudent().getFirstName() + &quot; &quot; + studentApplication.getStudent().getLastName() + &quot;\n\n&quot;)).add(new Text(&quot;Concordam com as seguintes condições de estágio : &quot;));</span>
+<span class="fc" id="L88">            document.add(paragraph.setTextAlignment(TextAlignment.CENTER));</span>
+<span class="fc" id="L89">            insertInternshipInfoTable(studentApplication, contractDto.getTotalHoursPerWeek(), document);</span>
+<span class="fc" id="L90">            document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));</span>
+<span class="fc" id="L91">            document.add(new Paragraph(new Text(&quot;TAREFAS E RESPONSABILIDADES DO ESTAGIÁRIO\n&quot;).setBold()));</span>
+<span class="fc" id="L92">            float documentWidth = document.getPageEffectiveArea(PageSize.A4).getWidth();</span>
+<span class="fc" id="L93">            final var table = new Table(1).setWidth(documentWidth);</span>
+<span class="fc" id="L94">            table.addCell(new Paragraph(studentApplication.getOffer().getDetails().getDescription()));</span>
+<span class="fc" id="L95">            document.add(table);</span>
+
+<span class="fc" id="L97">            internshipPartiesResponsabilities(contractDto, document);</span>
+
+<span class="fc" id="L99">            document.add(new Div().setTextAlignment(TextAlignment.JUSTIFIED)</span>
+<span class="fc" id="L100">                    .add(new Paragraph(&quot;ASSINATURAS - VER PRÓXIMA PÁGINA\n&quot;).setBold())</span>
+<span class="fc" id="L101">                    .setBackgroundColor(WebColors.getRGBColor(&quot;#DCDCDC&quot;))</span>
+<span class="fc" id="L102">                    .setWidth(documentWidth).setHeight(40f)</span>
+<span class="fc" id="L103">                    .setFixedPosition(100, 100, UnitValue.createPercentValue(100)));</span>
+
+<span class="fc" id="L105">            document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));</span>
+
+<span class="fc" id="L107">            document.add(new Div().setTextAlignment(TextAlignment.JUSTIFIED)</span>
+<span class="fc" id="L108">                    .add(new Paragraph(&quot;ASSINATURAS\n&quot;).setBold())</span>
+<span class="fc" id="L109">                    .setBackgroundColor(WebColors.getRGBColor(&quot;#DCDCDC&quot;))</span>
+<span class="fc" id="L110">                    .setWidth(documentWidth)</span>
+<span class="fc" id="L111">                    .setHeight(40f))</span>
+<span class="fc" id="L112">                    .add(new Paragraph().add(new Text(&quot;As partes comprometem-se a honrar este acordo de estágio. Em testemunho do que as partes assinaram,&quot;)</span>
+<span class="fc" id="L113">                            .setBold()</span>
+<span class="fc" id="L114">                            .setTextAlignment(TextAlignment.CENTER))</span>
+<span class="fc" id="L115">                            .setFirstLineIndent(15f));</span>
+<span class="fc" id="L116">            document.add(new Paragraph().add(new Text(&quot;\n\nSupervisor :\n&quot;).setBold()).setMarginBottom(75f))</span>
+<span class="fc" id="L117">                    .add(new LineSeparator(new SolidLine(1)).setMarginTop(-4))</span>
+<span class="fc" id="L118">                    .add(new Paragraph().add(new Paragraph(&quot;Date&quot;).setMarginLeft(290f)));</span>
+<span class="fc" id="L119">            document.add(new Paragraph().add(new Text(&quot;\nEstudante :\n&quot;).setBold()).setMarginBottom(75f)</span>
+<span class="fc" id="L120">                    .add(new LineSeparator(new SolidLine(1)).setMarginTop(-4)))</span>
+<span class="fc" id="L121">                    .add(new LineSeparator(new SolidLine(1)).setMarginTop(-4))</span>
+<span class="fc" id="L122">                    .add(new Paragraph().add(new Paragraph(&quot;Date\n&quot;).setMarginLeft(290f)));</span>
+<span class="fc" id="L123">            document.add(new Paragraph().add(new Text(&quot;Coordenação de estágio :\n&quot;).setBold()).setMarginBottom(75f))</span>
+<span class="fc" id="L124">                    .add(new LineSeparator(new SolidLine(1)).setMarginTop(-4))</span>
+<span class="fc" id="L125">                    .add(new Paragraph().add(new Paragraph(&quot;Date&quot;).setMarginLeft(290f)));</span>
+
+<span class="fc" id="L127">            document.close();</span>
+<span class="fc" id="L128">            String fileBase64 = encodeBytes(stream.toByteArray());</span>
+<span class="fc" id="L129">            contractDto.setFile(&quot;data:application/pdf;base64,&quot; + fileBase64);</span>
+<span class="fc" id="L130">            contractService.createAndSaveNewContract(contractDtoToContract(contractDto, studentApplication, admin));</span>
+        }
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        return stream != null;</span>
+    }
+
+    public Optional&lt;Contract&gt; signContract(ContractSignatureDTO signatureDto) {
+<span class="fc" id="L136">        return contractService.getContractById(signatureDto.getContractId())</span>
+<span class="fc" id="L137">                .flatMap(contract -&gt; performSignature(contract, signatureDto));</span>
+    }
+
+    private Optional&lt;Contract&gt; performSignature(Contract contract, ContractSignatureDTO signatureDto) {
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        if (contract.getSignatureState() != PENDING_FOR_ADMIN_REVIEW) {</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">            if (signatureDto.isApproved()) {</span>
+<span class="fc" id="L143">                final String signedFile = getContractFileWithSignature(contract, signatureDto);</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">                if (signedFile == null)</span>
+<span class="fc" id="L145">                    return Optional.empty();</span>
+<span class="fc" id="L146">                contract.setFile(signedFile);</span>
+<span class="fc" id="L147">            } else</span>
+<span class="fc" id="L148">                contract.setReasonForRejection(signatureDto.getReasonForRejection());</span>
+        }
+
+<span class="fc" id="L151">        contract.setSignatureState(getNextState(contract.getSignatureState(), signatureDto.isApproved()));</span>
+
+<span class="fc" id="L153">        final var signedContract = contractService.updateContract(contract.getId(), contract);</span>
+<span class="fc" id="L154">        signedContract.ifPresent(notifService::notifyContractUpdate);</span>
+<span class="fc" id="L155">        return signedContract;</span>
+    }
+
+    private String getContractFileWithSignature(Contract contract, ContractSignatureDTO signatureDto) {
+<span class="fc" id="L159">        ByteArrayOutputStream out = null;</span>
+
+        try {
+<span class="fc" id="L162">            PDDocument document = PDDocument.load(new ByteArrayInputStream(Base64.getMimeDecoder().decode(contract.getFile().split(&quot;,&quot;)[1])));</span>
+<span class="fc" id="L163">            PDPage page = document.getPage(document.getNumberOfPages() - 1);</span>
+<span class="fc" id="L164">            PDImageXObject image = PDImageXObject.createFromByteArray(document, Base64.getMimeDecoder().decode(signatureDto.getImageSignature().split(&quot;,&quot;)[1]), FileType.PNG.name());</span>
+<span class="fc" id="L165">            PDPageContentStream contentStream = new PDPageContentStream(document, page, AppendMode.APPEND, true);</span>
+
+<span class="fc" id="L167">            var state = contract.getSignatureState().name().toLowerCase();</span>
+<span class="fc bfc" id="L168" title="All 4 branches covered.">            var initialYPosition = (state.contains(&quot;employer&quot;) ? 600f : (state.contains(&quot;student&quot;) ? 460f : 330f));</span>
+
+<span class="fc" id="L170">            contentStream.drawImage(image, 75, initialYPosition, image.getWidth() / (image.getHeight() / 60f), 60f);</span>
+
+<span class="fc" id="L172">            contentStream.beginText();</span>
+<span class="fc" id="L173">            contentStream.setFont(PDType1Font.TIMES_ROMAN, 16);</span>
+<span class="fc" id="L174">            contentStream.newLineAtOffset(330, initialYPosition);</span>
+<span class="fc" id="L175">            contentStream.showText(ZonedDateTime.now().format(DTF_WITH_TIME));</span>
+<span class="fc" id="L176">            contentStream.newLineAtOffset(-270, -40);</span>
+<span class="fc" id="L177">            contentStream.showText(signatureDto.getNomSignataire());</span>
+<span class="fc" id="L178">            contentStream.endText();</span>
+
+<span class="fc" id="L180">            contentStream.close();</span>
+
+<span class="fc" id="L182">            out = new ByteArrayOutputStream();</span>
+<span class="fc" id="L183">            document.save(out);</span>
+<span class="fc" id="L184">            document.close();</span>
+        }
+<span class="fc" id="L186">        catch (Exception e) {</span>
+<span class="fc" id="L187">            log.error(&quot;Não foi possível registrar uma assinatura uma assinatura: {}&quot;, e.getMessage());</span>
+<span class="fc" id="L188">        }</span>
+
+<span class="fc bfc" id="L190" title="All 2 branches covered.">        return (out == null) ? null : (&quot;data:application/pdf;base64,&quot; + encodeBytes(out.toByteArray()));</span>
+    }
+
+    public Optional&lt;StudentApplication&gt; getStudentApplication(ContractDTO contract) {
+<span class="fc" id="L194">        return applicationService.getApplicationById(contract.getStudentApplicationId());</span>
+    }
+
+    private Contract contractDtoToContract(ContractDTO contractDto, StudentApplication application, Admin admin) {
+<span class="fc" id="L198">        Contract contract = new Contract();</span>
+<span class="fc" id="L199">        contract.setAdmin(admin);</span>
+<span class="fc" id="L200">        contract.setFile(contractDto.getFile());</span>
+<span class="fc" id="L201">        contract.setEngagementCollege(contractDto.getEngagementCollege());</span>
+<span class="fc" id="L202">        contract.setEngagementCompany(contractDto.getEngagementCompany());</span>
+<span class="fc" id="L203">        contract.setEngagementStudent(contractDto.getEngagementStudent());</span>
+<span class="fc" id="L204">        contract.setTotalHoursPerWeek(contractDto.getTotalHoursPerWeek());</span>
+<span class="fc" id="L205">        contract.setStudentApplication(application);</span>
+<span class="fc" id="L206">        return contract;</span>
+    }
+
+    private void insertInternshipInfoTable(StudentApplication application, float weeklyHours, Document document) {
+<span class="fc" id="L210">        InternshipOffer offer = application.getOffer();</span>
+<span class="fc" id="L211">        Table internshipInfoTable = new Table(1).setWidth(500f);</span>
+<span class="fc" id="L212">        internshipInfoTable.setBorder(new SolidBorder(1f));</span>
+<span class="fc" id="L213">        internshipInfoTable.addCell(new Cell().setPadding(0).setBorder(Border.NO_BORDER)</span>
+<span class="fc" id="L214">                .add(new Paragraph(&quot;LOCALIZAÇÃO DO ESTÁGIO&quot;).setBold().setMultipliedLeading(1.2f).setBackgroundColor(WebColors.getRGBColor(&quot;#DCDCDC&quot;))));</span>
+<span class="fc" id="L215">        internshipInfoTable.addCell(new Cell().setPadding(0).setBorder(Border.NO_BORDER)</span>
+<span class="fc" id="L216">                .add(new Paragraph(&quot;Endereço : &quot; + application.getOffer().getEmployer().getAddress()).setMultipliedLeading(1.2f)));</span>
+
+<span class="fc" id="L218">        internshipInfoTable.addCell(new Cell().setPadding(0).setBorder(Border.NO_BORDER)</span>
+<span class="fc" id="L219">                .add(new Paragraph(&quot;DURAÇÃO DO ESTÁGIO&quot;).setBold().setMultipliedLeading(1.2f).setBackgroundColor(WebColors.getRGBColor(&quot;#DCDCDC&quot;))));</span>
+<span class="fc" id="L220">        internshipInfoTable.addCell(new Cell().setPadding(0).setBorder(Border.NO_BORDER)</span>
+<span class="fc" id="L221">                .add(new Paragraph(&quot;Data de início : &quot; + parseDate(offer.getDetails().getInternshipStartDate()) +</span>
+<span class="fc" id="L222">                        &quot;\nDate do término: &quot; + parseDate(offer.getDetails().getInternshipEndDate())</span>
+<span class="fc" id="L223">                        + &quot;\nNúmero total de semanas : &quot; + dateIntervalToWeeks(offer.getDetails().getInternshipStartDate(), offer.getDetails().getInternshipEndDate()) + &quot;\n&quot;).setMultipliedLeading(1.2f)));</span>
+
+<span class="fc" id="L225">        internshipInfoTable.addCell(new Cell().setPadding(0).setBorder(Border.NO_BORDER)</span>
+<span class="fc" id="L226">                .add(new Paragraph(&quot;HORÁRIO DE TRABALHO&quot;).setBold().setMultipliedLeading(1.2f).setBackgroundColor(WebColors.getRGBColor(&quot;#DCDCDC&quot;))));</span>
+<span class="fc" id="L227">        internshipInfoTable.addCell(new Cell().setPadding(0).setBorder(Border.NO_BORDER)</span>
+<span class="fc" id="L228">                .add(new Paragraph(&quot;Horário de trabalho : &quot; + application.getOffer().getDetails().getStartTime() +</span>
+<span class="fc" id="L229">                        &quot;-&quot; + application.getOffer().getDetails().getEndTime() +</span>
+<span class="fc" id="L230">                        &quot;\nTotal de horas trabalhadas por semana: &quot; + weeklyHours + &quot;h\n&quot;).setMultipliedLeading(1.2f)));</span>
+
+<span class="fc" id="L232">        internshipInfoTable.addCell(new Cell().setPadding(0).setBorder(Border.NO_BORDER)</span>
+<span class="fc" id="L233">                .add(new Paragraph(&quot;SALÁRIO&quot;).setBold().setMultipliedLeading(1.2f).setBackgroundColor(WebColors.getRGBColor(&quot;#DCDCDC&quot;))));</span>
+<span class="fc" id="L234">        internshipInfoTable.addCell(new Cell().setPadding(0).setBorder(Border.NO_BORDER)</span>
+<span class="fc" id="L235">                .add(new Paragraph(&quot;Salário : &quot; + offer.getDetails().getSalary() + &quot;$&quot;).setMultipliedLeading(1.2f)));</span>
+<span class="fc" id="L236">        document.add(internshipInfoTable);</span>
+<span class="fc" id="L237">    }</span>
+
+<span class="pc" id="L239">    @SneakyThrows</span>
+    private void internshipPartiesResponsabilities(ContractDTO contract, Document document) {
+<span class="fc" id="L241">        PdfFont font = PdfFontFactory.createFont(StandardFonts.TIMES_ROMAN);</span>
+<span class="fc" id="L242">        document.add(new Paragraph(new Text(&quot;RESPONSABILIDADES\n&quot;).setBold()).setTextAlignment(TextAlignment.CENTER));</span>
+<span class="fc" id="L243">        document.add(new Paragraph(new Text(&quot;A universidade está comprometido com :\n&quot;).setBold())</span>
+<span class="fc" id="L244">                .add(new Paragraph(contract.getEngagementCollege())).setFont(font)</span>
+<span class="fc" id="L245">                .add(new Text(&quot;\nA empresa está comprometida com :\n&quot;).setBold())</span>
+<span class="fc" id="L246">                .add(new Paragraph(contract.getEngagementCompany()))</span>
+<span class="fc" id="L247">                .add(new Text(&quot;\nO estudante está comprometido com :\n&quot;).setBold())</span>
+<span class="fc" id="L248">                .add(new Paragraph(contract.getEngagementStudent()))</span>
+        );
+<span class="fc" id="L250">    }</span>
+
+    private String parseDate(LocalDate date) {
+<span class="fc" id="L253">        return date.format(DTF_WITHOUT_TIME);</span>
+    }
+
+    private long dateIntervalToWeeks(LocalDate startDate, LocalDate endDate) {
+<span class="fc" id="L257">        return ChronoUnit.WEEKS.between(startDate, endDate);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReportService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">The Ultimate Internship Manager Software Platform For College And University Plus Powered By Java</a> &gt; <a href="index.source.html" class="el_package">com.power222.tuimspfcauppbj.service</a> &gt; <span class="el_source">ReportService.java</span></div><h1>ReportService.java</h1><pre class="source lang-java linenums">package com.power222.tuimspfcauppbj.service;
+
+import com.power222.tuimspfcauppbj.dao.ContractRepository;
+import com.power222.tuimspfcauppbj.dao.InternshipOfferRepository;
+import com.power222.tuimspfcauppbj.dao.StudentRepository;
+import com.power222.tuimspfcauppbj.model.Contract;
+import com.power222.tuimspfcauppbj.model.InternshipOffer;
+import com.power222.tuimspfcauppbj.model.Student;
+import com.power222.tuimspfcauppbj.util.ContractSignatureState;
+import com.power222.tuimspfcauppbj.util.SemesterContext;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+
+@Service
+public class ReportService {
+
+    private final StudentRepository studentRepo;
+    private final InternshipOfferRepository offerRepo;
+    private final ContractRepository contractRepo;
+
+<span class="fc" id="L22">    public ReportService(StudentRepository studentRepo, InternshipOfferRepository offerRepo, ContractRepository contractRepo) {</span>
+<span class="fc" id="L23">        this.studentRepo = studentRepo;</span>
+<span class="fc" id="L24">        this.offerRepo = offerRepo;</span>
+<span class="fc" id="L25">        this.contractRepo = contractRepo;</span>
+<span class="fc" id="L26">    }</span>
+
+    public Page&lt;Student&gt; registeredStudents(int page, int itemPerPage) {
+<span class="fc" id="L29">        return studentRepo.findAllBySemesters(SemesterContext.getCurrent(), PageRequest.of(page, itemPerPage));</span>
+    }
+
+    public Page&lt;Student&gt; studentsWithoutResume(int page, int itemPerPage) {
+<span class="fc" id="L33">        return studentRepo.findAllBySemestersAndResumesIsEmpty(SemesterContext.getCurrent(), PageRequest.of(page, itemPerPage));</span>
+    }
+
+    public Page&lt;Student&gt; studentsPendingResumes(int page, int itemPerPage) {
+<span class="fc" id="L37">        return studentRepo.findAllBySemestersAndResumesReviewStatePending(SemesterContext.getCurrent(), PageRequest.of(page, itemPerPage));</span>
+    }
+
+    public Page&lt;Student&gt; studentsNotHired(int page, int itemPerPage) {
+<span class="fc" id="L41">        return studentRepo.findAllByApplications_ContractIsNull(PageRequest.of(page, itemPerPage));</span>
+    }
+
+    public Page&lt;Student&gt; studentsScheduledInterview(int page, int itemPerPage) {
+<span class="fc" id="L45">        return studentRepo.findAllByApplications_InterviewIsNotNull(PageRequest.of(page, itemPerPage));</span>
+    }
+
+    public Page&lt;InternshipOffer&gt; allOffers(int page, int itemPerPage) {
+<span class="fc" id="L49">        return offerRepo.findAll(PageRequest.of(page, itemPerPage));</span>
+    }
+
+    public Page&lt;InternshipOffer&gt; offersPendingApprobation(int page, int itemPerPage) {
+<span class="fc" id="L53">        return offerRepo.findAllByReviewStatePending(PageRequest.of(page, itemPerPage));</span>
+    }
+
+    public Page&lt;InternshipOffer&gt; offersWithoutHired(int page, int itemPerPage) {
+<span class="fc" id="L57">        return offerRepo.findAllByApplicationsStateNotAccepted(PageRequest.of(page, itemPerPage));</span>
+    }
+
+    public Page&lt;Contract&gt; contractsWaitingStudent(int page, int itemPerPage) {
+<span class="fc" id="L61">        return contractRepo.findAllBySignatureState(ContractSignatureState.WAITING_FOR_STUDENT_SIGNATURE, PageRequest.of(page, itemPerPage));</span>
+    }
+
+    public Page&lt;Contract&gt; contractsWaitingEmployer(int page, int itemPerPage) {
+<span class="fc" id="L65">        return contractRepo.findAllBySignatureState(ContractSignatureState.WAITING_FOR_EMPLOYER_SIGNATURE, PageRequest.of(page, itemPerPage));</span>
+    }
+
+    public Page&lt;Contract&gt; contractsWaitingAdmin(int page, int itemPerPage) {
+<span class="fc" id="L69">        return contractRepo.findAllBySignatureState(ContractSignatureState.WAITING_FOR_ADMIN_SIGNATURE, PageRequest.of(page, itemPerPage));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
